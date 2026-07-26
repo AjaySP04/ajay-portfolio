@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react'
 import { TriangleAlert } from 'lucide-react'
 import { Panel } from '@/components/panel'
+import { Section } from '@/components/section'
 import { site } from '@/content/site'
 
 /**
@@ -16,7 +17,7 @@ export function MetricsStrip() {
   const { heading, disclaimer, footnote, items } = site.metrics
 
   return (
-    <section aria-labelledby="metrics-heading" className="mx-auto max-w-6xl px-6">
+    <Section id="metrics">
       <Panel
         title={heading}
         headingId="metrics-heading"
@@ -61,6 +62,6 @@ export function MetricsStrip() {
           {footnote}
         </p>
       </Panel>
-    </section>
+    </Section>
   )
 }

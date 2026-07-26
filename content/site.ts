@@ -32,6 +32,12 @@ const actionSchema = z.object({
   external: z.boolean().default(false),
 })
 
+const navItemSchema = z.object({
+  id: z.string().min(1),
+  label: z.string().min(1),
+  href: z.string().startsWith('#'),
+})
+
 const siteSchema = z.object({
   name: z.string().min(1),
   /** Positioning line. Deliberately not a resume job title — those appear
@@ -50,6 +56,8 @@ const siteSchema = z.object({
     viewPath: z.string().startsWith('/'),
     updatedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   }),
+  /** Section nav. Adding a section here is all it takes to surface it. */
+  nav: z.array(navItemSchema).min(1),
   heroActions: z.array(actionSchema).min(1),
   metrics: z.object({
     heading: z.string().min(1),
@@ -74,9 +82,11 @@ export const site: Site = siteSchema.parse({
   },
   location: 'Dubai, United Arab Emirates',
   currentCompany: 'KPTAC Technologies',
+  // Verbatim opening sentence of the résumé summary. The rest of the summary
+  // lives in the About section, in the résumé's own words — the hero used to
+  // carry a paraphrase of it, which just said the same thing twice.
   tagline: [
     'Senior full-stack engineer with 10+ years building scalable, cloud-native systems across AdTech, Hospitality, Healthtech, and Insurtech.',
-    'I architect backend-heavy systems in Python and Golang on GCP and AWS, and bring LLMs and agentic AI into production — RAG pipelines, tool-using agent workflows, and the inference-serving patterns that keep them reliable.',
   ],
   email: 'ajays.parmar04@gmail.com',
   resume: {
@@ -85,6 +95,11 @@ export const site: Site = siteSchema.parse({
     viewPath: '/resume/view',
     updatedAt: '2026-07-26',
   },
+  nav: [
+    { id: 'about', label: 'About', href: '#about' },
+    { id: 'experience', label: 'Experience', href: '#experience' },
+    { id: 'skills', label: 'Skills', href: '#skills' },
+  ],
   heroActions: [
     {
       id: 'resume-download',
