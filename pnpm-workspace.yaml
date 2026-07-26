@@ -1,0 +1,10 @@
+# sharp         → next/image optimisation at build time
+# unrs-resolver → native resolver used by eslint-plugin-import-x
+allowBuilds:
+  sharp: true
+  unrs-resolver: true
+
+# Every dependency is exact-pinned in package.json and locked in
+# pnpm-lock.yaml, so pnpm 11's release-age gate only ever breaks CI on
+# versions that were already chosen deliberately.
+minimumReleaseAge: 0
