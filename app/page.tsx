@@ -1,4 +1,5 @@
 import { AboutSection } from '@/components/about-section'
+import { ContactSection } from '@/components/contact-section'
 import { ExperienceSection } from '@/components/experience-section'
 import { FeaturedProjects } from '@/components/featured-projects'
 import { Hero } from '@/components/hero'
@@ -14,6 +15,7 @@ export default function HomePage() {
       <ExperienceSection />
       <SkillsSection />
       <FeaturedProjects />
+      <ContactSection />
     </>
   )
 }

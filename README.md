@@ -34,7 +34,8 @@ Requires Node 20.9+ and pnpm 11.
 
 ```bash
 pnpm install
-pnpm dev          # http://localhost:3000
+cp .env.example .env.local   # only needed for the contact form
+pnpm dev                     # http://localhost:3000
 ```
 
 ```bash
@@ -125,6 +126,38 @@ exactly this reason — `live-speech-transcriber.vercel.app` returns 404, and th
 noted in its content file so nobody adds it back on faith. Re-check before adding any demo URL.
 
 ---
+
+## Contact form
+
+`content/contact.ts` → `POST /api/contact` → Resend → inbox. Three layers of protection, all
+server-side, all verified:
+
+| Layer | Behaviour |
+| --- | --- |
+| Honeypot | A `company_website` field positioned offscreen and `aria-hidden`. Filled ⇒ answered as success and **nothing is sent**, so a bot learns nothing. Not `type="hidden"`, which bots skip |
+| IP rate limit | 5 messages per 10 minutes, `Retry-After` on the 429 |
+| Zod | Authoritative validation in the route handler; the browser only gets native HTML validation |
+
+The email address is never in the HTML. It lives in `content/site.ts`, is read only inside the
+route handler, and is verified absent from the prerendered HTML, the RSC payload and every
+client chunk.
+
+**The phone number is not published.** There is no `tel:` link and the digits are never
+rendered. WhatsApp still works: the button points at the internal `/whatsapp` route, which 302s
+to `wa.me` server-side, so the number exists only in a `Location` header. A direct `wa.me` href
+would have leaked it into the HTML. Verified absent from the prerendered HTML, the RSC payload
+and every client chunk.
+
+Calendar booking is wired as a link — never an embed, since a booking widget would ship more
+third-party JS than the rest of the site combined — and sits at `visible: false` until the
+account exists.
+
+Without `RESEND_API_KEY` the endpoint returns 503 `unconfigured` and logs the message
+server-side. It never fakes success, because that would silently lose real mail.
+
+The form has a real `action` and `method`, so it submits with JavaScript disabled — the handler
+answers a native post with a 303 to `/contact/sent`. That page is `noindex`, which is why
+Lighthouse reports SEO 60 for it; a form confirmation page should not be in search results.
 
 ## Design notes
 
