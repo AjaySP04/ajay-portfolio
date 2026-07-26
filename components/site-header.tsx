@@ -16,19 +16,18 @@ export function SiteHeader() {
           <span className="sm:hidden">asp</span>
         </Link>
 
-        {/* Anchor nav only — every section is on the one page. Hidden below md,
-            where the page is short enough to scroll and the labels would crowd
-            the theme toggle. */}
-        <nav aria-label="Sections" className="hidden md:block">
+        {/* Hidden below lg: four labels plus the résumé link and toggle will not
+            fit a tablet width without crowding. */}
+        <nav aria-label="Sections" className="hidden lg:block">
           <ul className="flex items-center gap-1">
             {site.nav.map((item) => (
               <li key={item.id}>
-                <a
+                <Link
                   href={item.href}
                   className="ease-console inline-flex h-9 items-center rounded-sm border border-transparent px-3 font-mono text-[11px] tracking-[0.14em] text-muted uppercase transition-colors duration-200 hover:border-hairline hover:bg-elevated hover:text-fg"
                 >
                   {item.label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>

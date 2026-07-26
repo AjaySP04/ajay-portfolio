@@ -62,14 +62,23 @@ app/
   layout.tsx              root shell, metadata, fonts, theme provider
   page.tsx                homepage section order
   globals.css             theme tokens, reduced-motion rules, scroll reveal
+  projects/page.tsx       full grid with category + stack filters
+  projects/[slug]/        detail page, generated only for deepDive projects
   resume/route.ts         streams the PDF as a download
   resume/view/route.ts    serves the same PDF inline
 components/               presentation only — no content lives here
-content/                  every word on the site, Zod-validated
+content/
+  site.ts                 name, nav, channels, hero buttons, metrics
+  about.ts  experience.ts  skills.ts
+  projects/
+    schema.ts             the Project contract
+    index.ts              display order + derived filter lists
+    <slug>.ts             one file per project
 lib/                      resume streaming helper
 public/
   resume/ajay_singh_parmar_resume.pdf
-  images/profile.jpg
+  images/profile.jpg      1400px master, kept for the OG image
+  images/profile-400.jpg  what the About section actually serves
 ```
 
 ---
@@ -97,6 +106,23 @@ design — they are unverifiable and a senior reader discounts them on sight. Wh
 was actually used is in the experience entries.
 
 **About, education, interests.** `content/about.ts`.
+
+**Projects.** `content/projects/`. Adding one is a new `<slug>.ts` plus one line in
+`index.ts`; reordering the site is moving that line, because the array order in `index.ts`
+*is* the display order. The build fails on a duplicate slug or a project with no links at all.
+
+Per-project flags worth knowing:
+
+| Field | Effect |
+| --- | --- |
+| `featured: true` | Also appears in "Selected work" on the homepage |
+| `deepDive: true` | Generates `/projects/<slug>`. Without it that URL is a 404 — deliberate, so a thin project never gets a page emptier than the card it was clicked from |
+| `status` | `live` / `building` / `archived`, drives the coloured dot |
+| `stack` | Filter chips on `/projects` are derived from the union of these. There is no filter list to maintain |
+
+A demo link is only ever present when the demo actually resolves. Tarjuman's is omitted for
+exactly this reason — `live-speech-transcriber.vercel.app` returns 404, and the omission is
+noted in its content file so nobody adds it back on faith. Re-check before adding any demo URL.
 
 ---
 

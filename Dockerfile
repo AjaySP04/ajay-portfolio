@@ -30,12 +30,14 @@ ENV NODE_ENV=production \
 RUN npm install --global pnpm@11.17.0 \
     && useradd --system --uid 1001 --create-home nextjs
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml next.config.ts ./
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=builder /app/.next ./.next
+COPY --chown=nextjs:nextjs package.json pnpm-lock.yaml pnpm-workspace.yaml next.config.ts ./
+COPY --from=deps --chown=nextjs:nextjs /app/node_modules ./node_modules
+# Owned by the runtime user because Next writes its prerender cache back into
+# .next at request time. Root-owned here means EACCES on every on-demand render.
+COPY --from=builder --chown=nextjs:nextjs /app/.next ./.next
 # The resume routes read this off disk at request time, so it has to be a real
 # file in the image — not just something the build traced.
-COPY public ./public
+COPY --chown=nextjs:nextjs public ./public
 
 USER nextjs
 EXPOSE 3000

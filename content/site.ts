@@ -35,7 +35,9 @@ const actionSchema = z.object({
 const navItemSchema = z.object({
   id: z.string().min(1),
   label: z.string().min(1),
-  href: z.string().startsWith('#'),
+  // Root-relative, including the hash targets, so the same nav works from
+  // /projects and any future route — not just from the homepage.
+  href: z.string().startsWith('/'),
 })
 
 const siteSchema = z.object({
@@ -96,9 +98,10 @@ export const site: Site = siteSchema.parse({
     updatedAt: '2026-07-26',
   },
   nav: [
-    { id: 'about', label: 'About', href: '#about' },
-    { id: 'experience', label: 'Experience', href: '#experience' },
-    { id: 'skills', label: 'Skills', href: '#skills' },
+    { id: 'about', label: 'About', href: '/#about' },
+    { id: 'experience', label: 'Experience', href: '/#experience' },
+    { id: 'skills', label: 'Skills', href: '/#skills' },
+    { id: 'projects', label: 'Projects', href: '/projects' },
   ],
   heroActions: [
     {
