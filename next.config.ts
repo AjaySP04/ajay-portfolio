@@ -35,8 +35,16 @@ function contentSecurityPolicy(): string {
     'style-src': ["'self'", "'unsafe-inline'"],
     'img-src': ["'self'", 'data:', 'blob:'],
     'font-src': ["'self'", 'data:'],
-    // vitals.vercel-insights.com is where Speed Insights reports to.
-    'connect-src': ["'self'", 'https://vitals.vercel-insights.com', ...posthogOrigins],
+    // vitals.vercel-insights.com is where Speed Insights reports to. Turnstile's
+    // api.js fetches from its own origin as well as framing it, and a missing
+    // connect-src here would only surface as a silently broken widget on the day
+    // the keys get set — which is the worst time to find out.
+    'connect-src': [
+      "'self'",
+      'https://vitals.vercel-insights.com',
+      ...posthogOrigins,
+      ...turnstileOrigins,
+    ],
     // Turnstile renders its challenge in an iframe; nothing else may frame.
     'frame-src': turnstileEnabled ? turnstileOrigins : ["'none'"],
     // PostHog session replay compiles a worker from a blob.
