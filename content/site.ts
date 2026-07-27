@@ -59,6 +59,16 @@ const siteSchema = z.object({
   currentCompany: z.string().min(1),
   tagline: z.array(z.string().min(1)).min(1),
   email: z.email(),
+  mail: z.object({
+    /**
+     * Sending identity for the contact form. Requires ajaysparmar.com to be
+     * verified in Resend — until then Resend rejects it and the route falls
+     * back to `fallbackFrom` automatically.
+     */
+    from: z.string().min(1),
+    /** Resend's shared sender, which needs no domain verification. */
+    fallbackFrom: z.string().min(1),
+  }),
   resume: z.object({
     filename: z.string().regex(/\.pdf$/),
     downloadPath: z.string().startsWith('/'),
@@ -103,6 +113,10 @@ export const site: Site = siteSchema.parse({
     'Senior full-stack engineer with 10+ years building scalable, cloud-native systems across AdTech, Hospitality, Healthtech, and Insurtech.',
   ],
   email: 'ajays.parmar04@gmail.com',
+  mail: {
+    from: 'Ajay Singh Parmar <hello@ajaysparmar.com>',
+    fallbackFrom: 'Portfolio <onboarding@resend.dev>',
+  },
   resume: {
     filename: 'ajay_singh_parmar_resume.pdf',
     downloadPath: '/resume',

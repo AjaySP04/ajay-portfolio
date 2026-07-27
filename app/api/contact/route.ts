@@ -45,6 +45,24 @@ function respond(
   )
 }
 
+/**
+ * Does this Resend error mean "you may not send as that address"?
+ *
+ * Matched on message text because Resend does not expose a stable machine code
+ * for it. Deliberately narrow: a generic failure must NOT trigger the fallback,
+ * or a real outage would look like a sender problem forever.
+ */
+function isSenderRejected(error: { name?: string; message?: string }): boolean {
+  const text = `${error.name ?? ''} ${error.message ?? ''}`.toLowerCase()
+  return (
+    text.includes('domain is not verified') ||
+    text.includes('not verified') ||
+    text.includes('verify a domain') ||
+    (text.includes('domain') && text.includes('found')) ||
+    text.includes('testing emails to your own email')
+  )
+}
+
 export async function POST(request: Request) {
   const contentType = request.headers.get('content-type') ?? ''
   const accept = request.headers.get('accept') ?? ''
@@ -134,16 +152,39 @@ export async function POST(request: Request) {
     ])
 
     const resend = new Resend(apiKey)
-    const { error } = await resend.emails.send({
-      // Until the domain is verified in Resend, onboarding@resend.dev is
-      // the only sender that works. Override with CONTACT_FROM once it is.
-      from: process.env.CONTACT_FROM?.trim() || 'Portfolio <onboarding@resend.dev>',
-      to: [process.env.CONTACT_TO?.trim() || site.email],
-      replyTo: email,
-      subject: `Portfolio message from ${name}`,
-      html,
-      text,
-    })
+    const to = [process.env.CONTACT_TO?.trim() || site.email]
+
+    // CONTACT_FROM overrides; otherwise the configured domain sender.
+    const preferredFrom = process.env.CONTACT_FROM?.trim() || site.mail.from
+
+    const deliver = (from: string) =>
+      resend.emails.send({
+        from,
+        to,
+        replyTo: email,
+        subject: `Portfolio message from ${name}`,
+        html,
+        text,
+      })
+
+    let { error } = await deliver(preferredFrom)
+
+    /**
+     * Fall back to Resend's shared sender if the domain is not verified yet.
+     *
+     * DNS propagation plus Resend verification is not instant, and a message from
+     * a real person must not be lost in that window just because the nicer From
+     * address is not live yet. Retries exactly once and warns in the log, so a
+     * permanently unverified domain stays visible rather than silently masked.
+     */
+    if (error && preferredFrom !== site.mail.fallbackFrom && isSenderRejected(error)) {
+      console.warn(
+        `[contact] Resend rejected sender "${preferredFrom}" — domain likely not verified yet. ` +
+          `Retrying as ${site.mail.fallbackFrom}.`,
+        error,
+      )
+      ;({ error } = await deliver(site.mail.fallbackFrom))
+    }
 
     if (error) {
       console.error('[contact] Resend rejected the message:', error)

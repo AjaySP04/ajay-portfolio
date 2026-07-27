@@ -24,6 +24,7 @@ import {
   type BestTimes,
 } from '@/lib/sudoku/persistence'
 import { DIFFICULTIES, TECHNIQUE_LABELS, type Difficulty } from '@/lib/sudoku/types'
+import { track } from '@/lib/analytics/client'
 
 const BTN =
   'ease-console inline-flex h-9 items-center justify-center gap-1.5 rounded-sm border px-3 font-mono text-[11px] tracking-[0.1em] uppercase transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-40'
@@ -75,6 +76,7 @@ export function SudokuGame() {
     recorded.current = false
     setGenerating(false)
     boardRef.current?.focus()
+    track('sudoku_started', { difficulty: target, technique: puzzle.hardestTechnique })
   }, [])
 
   // Restore an autosaved game, or generate a fresh one.
@@ -97,6 +99,7 @@ export function SudokuGame() {
       if (cancelled) return
       dispatch({ type: 'restore', state: createGame(puzzle) })
       setGenerating(false)
+      track('sudoku_started', { difficulty: 'easy', technique: puzzle.hardestTechnique })
     }
 
     void boot()
@@ -131,6 +134,11 @@ export function SudokuGame() {
     if (!solved || recorded.current || !state) return
     recorded.current = true
     setBest(recordBestTime(state.difficulty, elapsedMs))
+    track('sudoku_completed', {
+      difficulty: state.difficulty,
+      seconds: Math.round(elapsedMs / 1000),
+      hints: state.hintsUsed,
+    })
   }, [solved, state, elapsedMs])
 
   const onKeyDown = useCallback(

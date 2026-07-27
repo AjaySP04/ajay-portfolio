@@ -2,6 +2,7 @@ import { ArrowUpRight, CalendarClock, MessageCircle, Phone } from 'lucide-react'
 import { ContactForm } from '@/components/contact-form'
 import { Panel } from '@/components/panel'
 import { Section } from '@/components/section'
+import { trackAttrs } from '@/lib/analytics/events'
 import { contact, visibleDirectChannels } from '@/content/contact'
 import { visibleChannels } from '@/content/site'
 
@@ -52,6 +53,10 @@ export function ContactSection() {
                         {...(channel.external
                           ? { target: '_blank', rel: 'noreferrer noopener' }
                           : {})}
+                        {...trackAttrs('channel_clicked', {
+                          channel: channel.id,
+                          source: 'contact',
+                        })}
                         className="ease-console group flex items-center gap-3 rounded-sm border border-hairline px-3 py-2.5 transition-colors duration-200 hover:border-hairline-strong hover:bg-elevated"
                       >
                         <Icon
@@ -90,6 +95,10 @@ export function ContactSection() {
                       href={channel.url}
                       target="_blank"
                       rel="noreferrer noopener me"
+                      {...trackAttrs('channel_clicked', {
+                        channel: channel.id,
+                        source: 'contact',
+                      })}
                       className="ease-console inline-flex items-center gap-1.5 rounded-sm border border-hairline px-2.5 py-1.5 font-mono text-[11px] tracking-[0.08em] text-muted uppercase transition-colors duration-200 hover:border-hairline-strong hover:text-fg"
                     >
                       {channel.label}

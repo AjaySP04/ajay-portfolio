@@ -231,6 +231,50 @@ links the GitHub / LinkedIn / Medium / X profiles into one entity.
 repo, no network at build. `next.config.ts` traces those files so the routes still work if one
 ever renders at request time.
 
+## Telemetry
+
+`content` → `data-track` attributes → one delegated listener → PostHog. Plus
+`@vercel/speed-insights` for field Web Vitals.
+
+**Cookieless by default.** PostHog boots with `persistence: 'memory'` — no cookie, no
+localStorage, no profile — so there is nothing to ask permission for and the consent bar never
+blocks the first impression. Verified: zero PostHog cookies and zero storage keys before
+consent. The honest trade-off is that a returning visitor counts as new, so unique-visitor
+numbers run high and retention is not measurable until someone opts in.
+
+**The consent bar is an offer, not a gate.** A slim fixed strip, mounted after 1.5s so it cannot
+contribute layout shift (measured CLS 0.0000). Accepting swaps persistence to
+`localStorage+cookie`, starts a person profile and enables session replay for the rest of the
+visit. Declining is a complete answer and is remembered.
+
+**posthog-js is dynamically imported.** It is ~71KB gzip — larger than all of this site's own
+JavaScript combined — so it loads on idle, after hydration, in its own chunk. `track()` queues
+anything fired before it lands. Without a key it is a no-op that makes no request at all.
+
+**Events go on server components via attributes, not handlers.** `trackAttrs()` emits
+`data-track` / `data-track-*`, and the provider owns a single delegated click listener. That is
+why the hero buttons, project cards and footer links are all still server components — adding
+telemetry cost no client JS beyond the provider itself.
+
+| Event | Props | Fired from |
+| --- | --- | --- |
+| `$pageview` | `pathname` | Provider, including client-side navigations |
+| `section_viewed` | `section` | IntersectionObserver at 33% |
+| `resume_downloaded` | `source`, `variant` | Header and hero links |
+| `project_clicked` | `slug`, `target` | Project card links |
+| `channel_clicked` | `channel`, `source` | Footer, contact, hero |
+| `contact_submitted` | `outcome` | Contact form, success and failure |
+| `sudoku_started` | `difficulty`, `technique` | New puzzle |
+| `sudoku_completed` | `difficulty`, `seconds`, `hints` | On solve |
+| `theme_toggled` | `to` | Theme button |
+
+`NEXT_PUBLIC_ANALYTICS_DEBUG=1` mirrors every event to the console and
+`window.__analyticsLog`, which is how the wiring above was verified without a PostHog account.
+
+**Known gap:** `resume_downloaded` fires on click, so a direct hit on `/resume` from a pasted
+link is not counted. Counting those needs `posthog-node` in the route handler; the client-side
+click covers the paths that actually get used.
+
 ## Design notes
 
 The look is dark-first and deliberately instrument-like: JetBrains Mono carries every

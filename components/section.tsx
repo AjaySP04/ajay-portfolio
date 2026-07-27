@@ -17,6 +17,8 @@ export function Section({
   return (
     <section
       id={id}
+      // Picked up by the analytics provider's IntersectionObserver.
+      data-track-section={id}
       aria-labelledby={`${id}-heading`}
       className={`mx-auto max-w-6xl scroll-mt-20 px-6 ${className}`}
     >

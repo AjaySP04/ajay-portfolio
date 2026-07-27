@@ -1,4 +1,5 @@
 import { ArrowRight, ArrowUpRight, BookOpenText, Download } from 'lucide-react'
+import { trackAttrs } from '@/lib/analytics/events'
 import type { HeroAction } from '@/content/site'
 
 const ICONS = {
@@ -22,10 +23,17 @@ const VARIANTS = {
 export function ActionLink({ action }: { action: HeroAction }) {
   const Icon = ICONS[action.icon]
 
+  // A hero CTA is either the résumé or an outbound profile link — never a
+  // project, so it must not pollute project_clicked.
+  const tracking = action.href.startsWith('/resume')
+    ? trackAttrs('resume_downloaded', { source: 'hero', variant: action.variant })
+    : trackAttrs('channel_clicked', { channel: action.id, source: 'hero' })
+
   return (
     <a
       href={action.href}
       {...(action.external ? { target: '_blank', rel: 'noreferrer noopener' } : {})}
+      {...tracking}
       className={`ease-console inline-flex h-10 items-center gap-2 rounded-sm border px-4 font-mono text-[12px] tracking-[0.12em] uppercase transition-colors duration-200 ${VARIANTS[action.variant]}`}
     >
       {action.label}

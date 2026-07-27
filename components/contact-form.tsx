@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { CircleCheck, Send, TriangleAlert } from 'lucide-react'
+import { track } from '@/lib/analytics/client'
 import type { ContactField } from '@/content/contact'
 
 type Copy = {
@@ -59,8 +60,11 @@ export function ContactForm({ copy }: { copy: Copy }) {
       if (response.ok && body.ok) {
         form.reset()
         setState({ kind: 'sent' })
+        track('contact_submitted', { outcome: 'sent' })
         return
       }
+
+      track('contact_submitted', { outcome: body.error ?? 'failed' })
 
       setState({
         kind: 'failed',

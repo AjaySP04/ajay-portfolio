@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { trackAttrs } from '@/lib/analytics/events'
 import { site, visibleChannels } from '@/content/site'
 
 export function SiteFooter() {
@@ -21,6 +22,7 @@ export function SiteFooter() {
               href={channel.url}
               target="_blank"
               rel="noreferrer noopener me"
+              {...trackAttrs('channel_clicked', { channel: channel.id, source: 'footer' })}
               className="ease-console tracking-[0.1em] uppercase transition-colors duration-200 hover:text-accent-text"
             >
               {channel.label}

@@ -6,6 +6,9 @@ import { SiteHeader } from '@/components/site-header'
 import { ThemeProvider } from '@/components/theme-provider'
 import { site } from '@/content/site'
 import { SITE_DESCRIPTION, SITE_KEYWORDS } from '@/lib/seo'
+import { SpeedInsights } from '@vercel/speed-insights/next'
+import { AnalyticsProvider } from '@/components/analytics/analytics-provider'
+import { ConsentBar } from '@/components/analytics/consent-bar'
 import { StructuredData } from '@/components/structured-data'
 import './globals.css'
 
@@ -85,7 +88,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </main>
             <SiteFooter />
           </div>
+          <AnalyticsProvider />
+          <ConsentBar />
         </ThemeProvider>
+        {/* Only on Vercel. The script lives at /_vercel/speed-insights/script.js,
+            which the platform serves — anywhere else (local `pnpm start`, the
+            Docker image) it 404s and logs two console errors, which costs 4
+            points of Lighthouse best-practices for no benefit. */}
+        {process.env.VERCEL ? <SpeedInsights /> : null}
       </body>
     </html>
   )

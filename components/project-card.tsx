@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { ArrowUpRight, BookText, ExternalLink, FileCode, GitBranch } from 'lucide-react'
+import { trackAttrs } from '@/lib/analytics/events'
 import type { Project } from '@/content/projects/schema'
 import type { ProjectStatus } from '@/content/projects/taxonomy'
 import { CATEGORY_LABELS, STATUS_LABELS } from '@/content/projects/taxonomy'
@@ -98,6 +99,7 @@ export function ProjectCard({
             href={project.links[key as keyof typeof LINK_META]}
             target="_blank"
             rel="noreferrer noopener"
+            {...trackAttrs('project_clicked', { slug: project.slug, target: key })}
             className="ease-console inline-flex items-center gap-1.5 font-mono text-[11px] tracking-[0.1em] text-muted uppercase transition-colors duration-200 hover:text-accent-text"
           >
             <Icon className="size-3.5" strokeWidth={1.75} aria-hidden="true" />
@@ -108,6 +110,7 @@ export function ProjectCard({
         {project.deepDive ? (
           <Link
             href={`/projects/${project.slug}`}
+            {...trackAttrs('project_clicked', { slug: project.slug, target: 'detail' })}
             className="ease-console ml-auto inline-flex items-center gap-1.5 font-mono text-[11px] tracking-[0.1em] text-accent-text uppercase transition-colors duration-200 hover:text-fg"
           >
             {/* Names the target rather than saying "read more" — generic link

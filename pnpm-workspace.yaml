@@ -1,6 +1,7 @@
 # sharp         → next/image optimisation at build time
 # unrs-resolver → native resolver used by eslint-plugin-import-x
 allowBuilds:
+  core-js: false
   sharp: true
   unrs-resolver: true
 

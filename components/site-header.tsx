@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Mark } from '@/components/mark'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { trackAttrs } from '@/lib/analytics/events'
 import { site } from '@/content/site'
 
 export function SiteHeader() {
@@ -36,6 +37,7 @@ export function SiteHeader() {
         <div className="flex shrink-0 items-center gap-1">
           <a
             href={site.resume.downloadPath}
+            {...trackAttrs('resume_downloaded', { source: 'header' })}
             className="ease-console inline-flex h-9 items-center rounded-sm border border-transparent px-3 font-mono text-[11px] tracking-[0.14em] text-muted uppercase transition-colors duration-200 hover:border-hairline hover:bg-elevated hover:text-fg"
           >
             résumé
