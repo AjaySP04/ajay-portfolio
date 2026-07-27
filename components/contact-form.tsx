@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Script from 'next/script'
 import { CircleCheck, Send, TriangleAlert } from 'lucide-react'
 import { track } from '@/lib/analytics/client'
 import type { ContactField } from '@/content/contact'
@@ -14,6 +15,16 @@ type Copy = {
   unconfiguredMessage: string
   genericErrorMessage: string
 }
+
+/**
+ * Turnstile's site key. Read from the environment at build time, so the widget
+ * and its script simply do not exist until the key is set — no third-party
+ * request, no bytes, no behaviour change for the current deployment.
+ *
+ * Inlined here rather than passed as a prop because it is public by definition
+ * and NEXT_PUBLIC_ vars are substituted into the client bundle anyway.
+ */
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? ''
 
 type State =
   | { kind: 'idle' }
@@ -158,6 +169,25 @@ export function ContactForm({ copy }: { copy: Copy }) {
           autoComplete="off"
         />
       </div>
+
+      {/* Implicit rendering: Turnstile finds this container by class name and
+          injects a hidden `cf-turnstile-response` input into the surrounding
+          form, which means both submission paths pick the token up for free —
+          FormData sees it here, and a native no-JS post carries it too. */}
+      {TURNSTILE_SITE_KEY ? (
+        <>
+          <div
+            className="cf-turnstile"
+            data-sitekey={TURNSTILE_SITE_KEY}
+            data-theme="auto"
+            data-size="flexible"
+          />
+          <Script
+            src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+            strategy="lazyOnload"
+          />
+        </>
+      ) : null}
 
       {state.kind === 'failed' ? (
         <p

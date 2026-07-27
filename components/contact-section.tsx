@@ -91,19 +91,29 @@ export function ContactSection() {
               <ul className="flex flex-wrap gap-1.5">
                 {visibleChannels.map((channel) => (
                   <li key={channel.id}>
-                    <a
-                      href={channel.url}
-                      target="_blank"
-                      rel="noreferrer noopener me"
-                      {...trackAttrs('channel_clicked', {
-                        channel: channel.id,
-                        source: 'contact',
-                      })}
-                      className="ease-console inline-flex items-center gap-1.5 rounded-sm border border-hairline px-2.5 py-1.5 font-mono text-[11px] tracking-[0.08em] text-muted uppercase transition-colors duration-200 hover:border-hairline-strong hover:text-fg"
-                    >
-                      {channel.label}
-                      <ArrowUpRight className="size-3" strokeWidth={1.75} aria-hidden="true" />
-                    </a>
+                    {channel.url ? (
+                      <a
+                        href={channel.url}
+                        target="_blank"
+                        rel="noreferrer noopener me"
+                        {...trackAttrs('channel_clicked', {
+                          channel: channel.id,
+                          source: 'contact',
+                        })}
+                        className="ease-console inline-flex items-center gap-1.5 rounded-sm border border-hairline px-2.5 py-1.5 font-mono text-[11px] tracking-[0.08em] text-muted uppercase transition-colors duration-200 hover:border-hairline-strong hover:text-fg"
+                      >
+                        {channel.label}
+                        <ArrowUpRight className="size-3" strokeWidth={1.75} aria-hidden="true" />
+                      </a>
+                    ) : (
+                      /* No profile URL to link to — see the note in the channel
+                         schema. Rendered as text so the handle is still visible
+                         and selectable, without a link that goes nowhere. */
+                      <span className="inline-flex items-center gap-1.5 rounded-sm border border-hairline border-dashed px-2.5 py-1.5 font-mono text-[11px] tracking-[0.08em] text-muted uppercase">
+                        {channel.label}
+                        <span className="text-faint normal-case">{channel.handle}</span>
+                      </span>
+                    )}
                   </li>
                 ))}
               </ul>

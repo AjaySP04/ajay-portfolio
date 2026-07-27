@@ -5,6 +5,7 @@ import { FeaturedProjects } from '@/components/featured-projects'
 import { Hero } from '@/components/hero'
 import { MetricsStrip } from '@/components/metrics-strip'
 import { SkillsSection } from '@/components/skills-section'
+import { WritingSection } from '@/components/writing-section'
 
 export default function HomePage() {
   return (
@@ -15,6 +16,7 @@ export default function HomePage() {
       <ExperienceSection />
       <SkillsSection />
       <FeaturedProjects />
+      <WritingSection />
       <ContactSection />
     </>
   )

@@ -4,9 +4,12 @@ import { roles } from '@/content/experience'
 import { projects } from '@/content/projects'
 import { skills } from '@/content/skills'
 import { site } from '@/content/site'
+import { getPosts, MEDIUM_PROFILE } from '@/content/writing'
 import { absoluteUrl, SITE_DESCRIPTION } from '@/lib/seo'
 
-export const dynamic = 'force-static'
+// No longer force-static: the writing list comes from the Medium feed, so this
+// revalidates with it rather than freezing whatever was true at build time.
+export const revalidate = 21600
 
 /**
  * /llms.txt — a plain-text summary for language models.
@@ -16,7 +19,9 @@ export const dynamic = 'force-static'
  * the order that matters, instead of leaving it to infer them from markup. Built
  * from the same content modules as the pages, so it cannot go stale separately.
  */
-export function GET() {
+export async function GET() {
+  const posts = await getPosts()
+
   const lines: string[] = [
     `# ${site.name}`,
     '',
@@ -83,9 +88,20 @@ export function GET() {
     )
   }
 
-  lines.push('## Pages', '')
+  if (posts.length > 0) {
+    lines.push('', '## Writing', '', `Published on Medium: ${MEDIUM_PROFILE}`, '')
+    for (const post of posts) {
+      const when = post.publishedAt ? post.publishedAt.slice(0, 10) : 'undated'
+      lines.push(`- ${post.title} (${when}) — ${post.url}${post.tags.length ? ` [${post.tags.join(', ')}]` : ''}`)
+    }
+  }
+
+  lines.push('', '## Pages', '')
   lines.push(`- ${absoluteUrl('/')} — home: positioning, career metrics, about, experience, skills, selected work, contact`)
   lines.push(`- ${absoluteUrl('/projects')} — all projects, filterable by category and stack`)
+  if (posts.length > 0) {
+    lines.push(`- ${absoluteUrl('/writing')} — all technical writing, syndicated from Medium`)
+  }
   lines.push(`- ${absoluteUrl('/play')} — browser games`)
   for (const game of games) {
     lines.push(`- ${absoluteUrl(game.href)} — ${game.title}: ${game.tagline}`)

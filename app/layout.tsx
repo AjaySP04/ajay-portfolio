@@ -107,11 +107,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <AnalyticsProvider />
           <ConsentBar />
         </ThemeProvider>
-        {/* Only on Vercel. The script lives at /_vercel/speed-insights/script.js,
-            which the platform serves — anywhere else (local `pnpm start`, the
-            Docker image) it 404s and logs two console errors, which costs 4
-            points of Lighthouse best-practices for no benefit. */}
-        {process.env.VERCEL ? <SpeedInsights /> : null}
+        {/* The script lives at /_vercel/speed-insights/script.js, which only the
+            platform serves — anywhere else (local `pnpm start`, the Docker image)
+            it 404s and logs two console errors, costing 4 points of Lighthouse
+            best-practices for no benefit. So it is opt-OUT, not opt-in.
+
+            This was gated on `process.env.VERCEL` and silently collected nothing
+            in production for the whole first month: that variable only exists if
+            "Automatically expose System Environment Variables" is on, and it was
+            not. An affirmative gate on a variable the platform may not provide
+            fails closed, which is exactly wrong for telemetry — you cannot tell
+            "no traffic" from "not wired up". Failing open means the only place it
+            can be off is somewhere we said so explicitly, below. */}
+        {process.env.DISABLE_SPEED_INSIGHTS ? null : <SpeedInsights />}
       </body>
     </html>
   )

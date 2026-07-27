@@ -16,7 +16,10 @@ RUN pnpm install --frozen-lockfile
 # ── build ─────────────────────────────────────────────────────────────────
 FROM node:24-bookworm-slim AS builder
 WORKDIR /app
-ENV NEXT_TELEMETRY_DISABLED=1
+# DISABLE_SPEED_INSIGHTS is read while pages are statically generated, so it has
+# to be set on the *builder* — setting it only at runtime would be too late.
+ENV NEXT_TELEMETRY_DISABLED=1 \
+    DISABLE_SPEED_INSIGHTS=1
 RUN npm install --global pnpm@11.17.0
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -26,7 +29,8 @@ RUN pnpm build
 FROM node:24-bookworm-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production \
-    NEXT_TELEMETRY_DISABLED=1
+    NEXT_TELEMETRY_DISABLED=1 \
+    DISABLE_SPEED_INSIGHTS=1
 RUN npm install --global pnpm@11.17.0 \
     && useradd --system --uid 1001 --create-home nextjs
 

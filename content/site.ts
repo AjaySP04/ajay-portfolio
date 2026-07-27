@@ -6,12 +6,24 @@ import { z } from 'zod'
  * Validated at build time so a typo fails the build instead of shipping.
  */
 
-const channelSchema = z.object({
-  id: z.string().min(1),
-  label: z.string().min(1),
-  url: z.url(),
-  visible: z.boolean(),
-})
+const channelSchema = z
+  .object({
+    id: z.string().min(1),
+    label: z.string().min(1),
+    /**
+     * Optional, because not every channel has a linkable profile. Discord
+     * identifies people by username but only exposes /users/<numeric id>, which
+     * is not derivable from the handle — so it ships as copyable text instead of
+     * a link that would 404.
+     */
+    url: z.url().optional(),
+    /** Shown verbatim when there is no url. */
+    handle: z.string().min(1).optional(),
+    visible: z.boolean(),
+  })
+  .refine((channel) => Boolean(channel.url ?? channel.handle), {
+    message: 'a channel needs either a url or a handle',
+  })
 
 const metricSchema = z.object({
   value: z.string().min(1),
@@ -155,6 +167,7 @@ export const site: Site = siteSchema.parse({
     { id: 'experience', label: 'Experience', href: '/#experience' },
     { id: 'skills', label: 'Skills', href: '/#skills' },
     { id: 'projects', label: 'Projects', href: '/projects' },
+    { id: 'writing', label: 'Writing', href: '/writing' },
     { id: 'games', label: 'Games', href: '/play' },
     { id: 'contact', label: 'Contact', href: '/#contact' },
   ],
@@ -247,7 +260,26 @@ export const site: Site = siteSchema.parse({
       url: 'https://x.com/ajays_parmar',
       visible: true,
     },
+    {
+      id: 'discord',
+      label: 'Discord',
+      // Handle, not a url: Discord only addresses profiles as
+      // /users/<numeric id>, which cannot be derived from a username.
+      handle: 'ajaysparmar',
+      visible: true,
+    },
   ],
 })
 
 export const visibleChannels = site.channels.filter((channel) => channel.visible)
+
+/**
+ * Visible channels that have a real profile URL.
+ *
+ * Separate from `visibleChannels` so link contexts — the footer, JSON-LD
+ * `sameAs` — cannot accidentally render an anchor with an undefined href or
+ * publish a username where a URL is required.
+ */
+export const linkableChannels = visibleChannels.filter(
+  (channel): channel is typeof channel & { url: string } => Boolean(channel.url),
+)

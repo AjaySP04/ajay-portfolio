@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { trackAttrs } from '@/lib/analytics/events'
-import { site, visibleChannels } from '@/content/site'
+import { linkableChannels, site } from '@/content/site'
 
 export function SiteFooter() {
   return (
@@ -16,7 +16,10 @@ export function SiteFooter() {
           >
             Games
           </Link>
-          {visibleChannels.map((channel) => (
+          {/* linkableChannels, not visibleChannels: a footer is a row of links,
+              and a handle with no profile URL has nothing to link to. Discord
+              still appears in the contact panel, where it can be shown as text. */}
+          {linkableChannels.map((channel) => (
             <a
               key={channel.id}
               href={channel.url}

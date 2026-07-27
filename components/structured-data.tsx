@@ -1,7 +1,7 @@
 import { roles } from '@/content/experience'
 import { about } from '@/content/about'
 import { skills } from '@/content/skills'
-import { site, visibleChannels } from '@/content/site'
+import { linkableChannels, site } from '@/content/site'
 import { absoluteUrl, SITE_DESCRIPTION } from '@/lib/seo'
 
 /**
@@ -46,7 +46,9 @@ export function StructuredData() {
     // sameAs is what links these profiles into one entity for a knowledge panel,
     // and what tells Google the old Jekyll site is the same person rather than a
     // competing result.
-    sameAs: [...visibleChannels.map((channel) => channel.url), ...site.sameAs],
+    // linkableChannels: sameAs is a list of URLs that identify the same entity,
+    // so a bare username would be an invalid value, not a weaker one.
+    sameAs: [...linkableChannels.map((channel) => channel.url), ...site.sameAs],
   }
 
   const website = {

@@ -5,12 +5,38 @@ import { ContactMessageEmail } from '@/emails/contact-message'
 import { contact } from '@/content/contact'
 import { site } from '@/content/site'
 import { clientIp, rateLimit } from '@/lib/rate-limit'
+import {
+  MAX_BODY_BYTES,
+  isSameOrigin,
+  spamScore,
+  turnstileEnabled,
+  verifyTurnstile,
+} from '@/lib/security'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-const WINDOW_MS = 10 * 60 * 1000
-const MAX_PER_WINDOW = 5
+/**
+ * Four windows, cheapest first.
+ *
+ * One limit cannot cover both shapes of abuse. Per-IP stops the obvious case of
+ * a single client hammering the form, but a botnet rotates addresses and slips
+ * straight through it — so GLOBAL is the backstop that decides how much mail the
+ * inbox can receive in an hour no matter how many hosts are asking. BURST exists
+ * because a human cannot send two considered messages in twenty seconds, and
+ * EMAIL stops the same address being used over and over from fresh IPs.
+ *
+ * The global cap is the one with a real trade-off: hitting it turns the form off
+ * for everyone, including a genuine visitor. 40/hour is set far above any
+ * plausible organic rate for a personal site, so reaching it is itself evidence
+ * of abuse.
+ */
+const LIMITS = {
+  BURST: { max: 2, windowMs: 20 * 1000 },
+  IP: { max: 5, windowMs: 10 * 60 * 1000 },
+  EMAIL: { max: 3, windowMs: 60 * 60 * 1000 },
+  GLOBAL: { max: 40, windowMs: 60 * 60 * 1000 },
+} as const
 
 const messageSchema = z.object({
   name: z.string().trim().min(1, 'Name is required').max(100),
@@ -63,10 +89,46 @@ function isSenderRejected(error: { name?: string; message?: string }): boolean {
   )
 }
 
+/** 429 with the right Retry-After, in whichever format the caller asked for. */
+function tooMany(mode: Mode, retryAfterSeconds: number, message: string) {
+  return new Response(
+    mode === 'json' ? JSON.stringify({ ok: false, error: 'rate_limited', message }) : message,
+    {
+      status: 429,
+      headers: {
+        'Retry-After': String(retryAfterSeconds),
+        'Content-Type': mode === 'json' ? 'application/json' : 'text/plain; charset=utf-8',
+      },
+    },
+  )
+}
+
 export async function POST(request: Request) {
   const contentType = request.headers.get('content-type') ?? ''
   const accept = request.headers.get('accept') ?? ''
   const mode: Mode = accept.includes('application/json') ? 'json' : 'form'
+
+  // Before anything else, and before any parsing: a body this large is either a
+  // mistake or an attempt to make the server do work. Rejecting on the declared
+  // length costs nothing and never allocates.
+  const declaredLength = Number(request.headers.get('content-length') ?? '0')
+  if (Number.isFinite(declaredLength) && declaredLength > MAX_BODY_BYTES) {
+    return respond(mode, 413, { ok: false, error: 'too_large', message: 'That message is too long.' })
+  }
+
+  /**
+   * Reject anything not posted from our own pages.
+   *
+   * Checked before the honeypot so a bot that never loaded the form gets nothing
+   * back but a 403 — no hint about which field mattered, and no work done.
+   */
+  if (!isSameOrigin(request.headers)) {
+    return respond(mode, 403, {
+      ok: false,
+      error: 'forbidden',
+      message: 'Submit the form from the site.',
+    })
+  }
 
   let raw: Record<string, unknown>
   try {
@@ -87,20 +149,21 @@ export async function POST(request: Request) {
   }
 
   const ip = clientIp(request.headers)
-  const limit = rateLimit(`contact:${ip}`, MAX_PER_WINDOW, WINDOW_MS)
-  if (!limit.ok) {
-    return new Response(
-      mode === 'json'
-        ? JSON.stringify({ ok: false, error: 'rate_limited', message: 'Too many messages. Try again shortly.' })
-        : 'Too many messages from this address. Try again shortly.',
-      {
-        status: 429,
-        headers: {
-          'Retry-After': String(limit.retryAfterSeconds),
-          'Content-Type': mode === 'json' ? 'application/json' : 'text/plain; charset=utf-8',
-        },
-      },
-    )
+
+  const burst = rateLimit(`contact:burst:${ip}`, LIMITS.BURST.max, LIMITS.BURST.windowMs)
+  if (!burst.ok) {
+    return tooMany(mode, burst.retryAfterSeconds, 'Slow down a moment, then send it again.')
+  }
+
+  const perIp = rateLimit(`contact:ip:${ip}`, LIMITS.IP.max, LIMITS.IP.windowMs)
+  if (!perIp.ok) {
+    return tooMany(mode, perIp.retryAfterSeconds, 'Too many messages from this address. Try again shortly.')
+  }
+
+  const global = rateLimit('contact:global', LIMITS.GLOBAL.max, LIMITS.GLOBAL.windowMs)
+  if (!global.ok) {
+    console.warn('[contact] GLOBAL rate limit reached — the form is closed for now. Likely abuse.')
+    return tooMany(mode, global.retryAfterSeconds, 'The form is busy right now. Try WhatsApp or LinkedIn.')
   }
 
   const parsed = messageSchema.safeParse(raw)
@@ -135,7 +198,43 @@ export async function POST(request: Request) {
   }
 
   const { name, email, message } = parsed.data
+
+  // After validation, so the key is a real normalised address rather than
+  // whatever arbitrary string was posted.
+  const perEmail = rateLimit(
+    `contact:email:${email.toLowerCase()}`,
+    LIMITS.EMAIL.max,
+    LIMITS.EMAIL.windowMs,
+  )
+  if (!perEmail.ok) {
+    return tooMany(mode, perEmail.retryAfterSeconds, 'That address has already sent a few messages. Try again later.')
+  }
+
+  // Last gate before doing real work, because it costs a network round trip.
+  // No-op unless both Turnstile keys are configured.
+  const captcha = await verifyTurnstile(raw['cf-turnstile-response'], ip)
+  if (!captcha.ok) {
+    console.warn(`[contact] Turnstile rejected a submission (${captcha.reason}) from ${ip}`)
+    return respond(mode, 400, {
+      ok: false,
+      error: 'captcha',
+      message: turnstileEnabled()
+        ? 'The bot check did not pass. Reload the page and try again.'
+        : contact.genericErrorMessage,
+    })
+  }
+
   const receivedAt = new Date().toISOString().replace('T', ' ').slice(0, 16) + ' UTC'
+
+  /**
+   * Tag rather than block. A wrong guess here costs a hiring enquiry, so a high
+   * score only makes the message filterable in the inbox — it still gets sent.
+   */
+  const spam = spamScore({ name, message })
+  const subject =
+    spam.score >= 3
+      ? `[likely spam: ${spam.signals.join(', ')}] Portfolio message from ${name}`
+      : `Portfolio message from ${name}`
 
   try {
     const element = ContactMessageEmail({
@@ -162,7 +261,7 @@ export async function POST(request: Request) {
         from,
         to,
         replyTo: email,
-        subject: `Portfolio message from ${name}`,
+        subject,
         html,
         text,
       })

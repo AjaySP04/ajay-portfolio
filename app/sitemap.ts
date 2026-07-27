@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next'
 import { deepDiveProjects } from '@/content/projects'
 import { games } from '@/content/games'
 import { site } from '@/content/site'
+import { getPosts } from '@/content/writing'
 import { absoluteUrl } from '@/lib/seo'
 
 /**
@@ -10,7 +11,7 @@ import { absoluteUrl } from '@/lib/seo'
  * Deliberately excluded: /contact/sent (noindex), /resume and /resume/view
  * (they stream a PDF, not a page), /whatsapp (a redirect) and /api/*.
  */
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   /**
    * Derived from content, not from build time.
    *
@@ -20,9 +21,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
    */
   const now = new Date(`${site.resume.updatedAt}T00:00:00Z`)
 
+  /**
+   * /writing carries the newest post's date rather than the résumé date, since
+   * it is the one page here whose content changes without a deploy. Falls back
+   * to `now` if the feed is unreachable while the sitemap is generated.
+   */
+  const posts = await getPosts()
+  const newestPost = posts[0]?.publishedAt
+  const writingModified = newestPost ? new Date(newestPost) : now
+
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: absoluteUrl('/'), lastModified: now, changeFrequency: 'monthly', priority: 1 },
     { url: absoluteUrl('/projects'), lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+    {
+      url: absoluteUrl('/writing'),
+      lastModified: writingModified,
+      changeFrequency: 'weekly',
+      priority: 0.6,
+    },
     { url: absoluteUrl('/play'), lastModified: now, changeFrequency: 'yearly', priority: 0.4 },
   ]
 
