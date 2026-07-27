@@ -2,8 +2,11 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft, BookText, ExternalLink, FileCode, GitBranch } from 'lucide-react'
+import { JsonLd } from '@/components/structured-data'
 import { PageHeader } from '@/components/page-header'
 import { Panel } from '@/components/panel'
+import { site } from '@/content/site'
+import { absoluteUrl } from '@/lib/seo'
 import { deepDiveProjects, getProject } from '@/content/projects'
 import { CATEGORY_LABELS, STATUS_LABELS } from '@/content/projects/taxonomy'
 
@@ -33,6 +36,13 @@ export async function generateMetadata({
   return {
     title: project.title,
     description: project.tagline,
+    alternates: { canonical: `/projects/${project.slug}` },
+    openGraph: {
+      type: 'article',
+      url: `/projects/${project.slug}`,
+      title: project.title,
+      description: project.tagline,
+    },
   }
 }
 
@@ -55,6 +65,47 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
   return (
     <>
+      {/* Per-project structured data: names the work, its stack and where the
+          source lives, plus a breadcrumb so search shows the real hierarchy
+          rather than a bare URL. */}
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@graph': [
+            {
+              '@type': 'SoftwareSourceCode',
+              name: project.title,
+              headline: project.title,
+              description: project.tagline,
+              abstract: project.description.join(' '),
+              url: absoluteUrl(`/projects/${project.slug}`),
+              codeRepository: project.links.repo,
+              programmingLanguage: project.stack,
+              keywords: project.stack.join(', '),
+              author: { '@type': 'Person', name: site.name, url: site.url },
+            },
+            {
+              '@type': 'BreadcrumbList',
+              itemListElement: [
+                { '@type': 'ListItem', position: 1, name: 'Home', item: absoluteUrl('/') },
+                {
+                  '@type': 'ListItem',
+                  position: 2,
+                  name: 'Projects',
+                  item: absoluteUrl('/projects'),
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 3,
+                  name: project.title,
+                  item: absoluteUrl(`/projects/${project.slug}`),
+                },
+              ],
+            },
+          ],
+        }}
+      />
+
       <PageHeader
         kicker={`${CATEGORY_LABELS[project.category]} · ${STATUS_LABELS[project.status]}`}
         title={project.title}

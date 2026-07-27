@@ -8,6 +8,8 @@ export const metadata: Metadata = {
   title: 'Sudoku',
   description:
     'A keyboard-first sudoku with a generator that guarantees a unique solution and rates difficulty by the solving technique required, not by clue count.',
+  alternates: { canonical: '/play/sudoku' },
+  openGraph: { type: 'website', url: '/play/sudoku', title: 'Sudoku' },
 }
 
 export default function SudokuPage() {

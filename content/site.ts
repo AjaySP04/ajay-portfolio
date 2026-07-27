@@ -85,7 +85,11 @@ export type Channel = z.infer<typeof channelSchema>
 
 export const site: Site = siteSchema.parse({
   name: 'Ajay Singh Parmar',
-  url: 'https://ajaysparmar.com',
+  // www, not the apex: Vercel serves www and 308-redirects ajaysparmar.com to
+  // it. Canonical and OG URLs must name the host that actually answers, or
+  // Phase 7 will point every canonical tag at a redirect. If this is ever
+  // flipped in Vercel to make the apex canonical, change it here too.
+  url: 'https://www.ajaysparmar.com',
   positioning: {
     role: 'Senior Developer',
     qualifier: 'Backend-heavy, full-stack, AI in production',

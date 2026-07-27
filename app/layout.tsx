@@ -5,17 +5,54 @@ import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
 import { ThemeProvider } from '@/components/theme-provider'
 import { site } from '@/content/site'
+import { SITE_DESCRIPTION, SITE_KEYWORDS } from '@/lib/seo'
+import { StructuredData } from '@/components/structured-data'
 import './globals.css'
+
+const TITLE = `${site.name} — ${site.positioning.role}`
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: `${site.name} — ${site.positioning.role}`,
+    default: TITLE,
     template: `%s — ${site.name}`,
   },
-  description: site.tagline.join(' '),
+  description: SITE_DESCRIPTION,
   applicationName: site.name,
-  authors: [{ name: site.name }],
+  authors: [{ name: site.name, url: site.url }],
+  creator: site.name,
+  publisher: site.name,
+  keywords: SITE_KEYWORDS,
+  // Every page sets its own; this is the fallback for the homepage.
+  alternates: { canonical: '/' },
+  openGraph: {
+    type: 'website',
+    siteName: site.name,
+    locale: 'en_US',
+    url: site.url,
+    title: TITLE,
+    description: SITE_DESCRIPTION,
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: TITLE,
+    description: SITE_DESCRIPTION,
+    creator: '@ajays_parmar',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      // Let Google show full-size previews and untruncated snippets; the
+      // defaults are conservative and clip both.
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    },
+  },
+  category: 'technology',
 }
 
 export const viewport: Viewport = {
@@ -32,6 +69,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${inter.variable} ${jetbrainsMono.variable}`}
     >
       <body className="min-h-dvh">
+        <StructuredData />
         <ThemeProvider>
           <a
             href="#main"

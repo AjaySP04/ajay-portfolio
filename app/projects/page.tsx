@@ -7,6 +7,14 @@ export const metadata: Metadata = {
   title: 'Projects',
   description:
     'Things Ajay Singh Parmar has built outside of client work — offline speech AI in Rust, a production payment-commission engine replica, and LLM integration experiments.',
+  alternates: { canonical: '/projects' },
+  openGraph: {
+    type: 'website',
+    url: '/projects',
+    title: 'Projects',
+    description:
+      'Offline speech AI in Rust, a production payment-commission engine replica, and LLM integration work.',
+  },
 }
 
 export default function ProjectsPage() {

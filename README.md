@@ -197,6 +197,40 @@ Keyboard: arrows move, `1`–`9` place, `N` notes, `U`/`R` undo/redo, `X` mistak
 entry first rather than deducing around it. Progress and per-difficulty best times autosave to
 `localStorage`; history is deliberately not persisted.
 
+## SEO and discoverability
+
+Everything is derived from the content modules, so none of it can drift from the visible page.
+
+| Surface | Where | Notes |
+| --- | --- | --- |
+| Canonical URLs | per-page `alternates.canonical` | Absolute, against `site.url` |
+| OpenGraph / Twitter | root `metadata` + per page | `summary_large_image` |
+| OG images | `app/**/opengraph-image.tsx` | Generated at build via `next/og` |
+| `sitemap.xml` | `app/sitemap.ts` | Built from projects + games |
+| `robots.txt` | `app/robots.ts` | Names AI crawlers explicitly |
+| JSON-LD | `components/structured-data.tsx` | Person, WebSite, ProfilePage; SoftwareSourceCode + breadcrumbs per project |
+| `llms.txt` | `app/llms.txt/route.ts` | Plain-text summary for answer engines |
+
+**`site.url` must name the host that actually answers.** Vercel serves `www` and 308-redirects the
+apex, so canonical is `https://www.ajaysparmar.com`. Pointing it at a redirecting host splits
+ranking signals and makes every link preview resolve through a hop. If you flip the primary
+domain in Vercel, change that one line too.
+
+**Answer engines are allowed on purpose.** `robots.txt` names GPTBot, OAI-SearchBot, ClaudeBot,
+PerplexityBot and friends individually, because several read only their own user-agent group and
+ignore the wildcard. Being in an answer engine's index is worth more to a job search than the
+marginal cost of training use. `Google-Extended` and `Applebot-Extended` control AI use only —
+allowing or blocking them does not affect normal search ranking either way.
+
+**JSON-LD is the highest-leverage part.** Google uses it to build a person knowledge panel, and
+answer engines lean on it because it states plainly what prose only implies. `sameAs` is what
+links the GitHub / LinkedIn / Medium / X profiles into one entity.
+
+**OG font gotcha:** Satori (behind `ImageResponse`) accepts ttf/otf/**woff but not woff2**.
+`lib/og.tsx` reads the `.woff` from the installed `@fontsource/jetbrains-mono` — no binary in the
+repo, no network at build. `next.config.ts` traces those files so the routes still work if one
+ever renders at request time.
+
 ## Design notes
 
 The look is dark-first and deliberately instrument-like: JetBrains Mono carries every

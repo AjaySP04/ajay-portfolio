@@ -21,7 +21,8 @@ describe('content schemas', () => {
     // A trailing slash doubles up when composed into metadataBase-relative URLs.
     expect(site.url.endsWith('/')).toBe(false)
     expect(url.pathname).toBe('/')
-    expect(url.host).toBe('ajaysparmar.com')
+    // Must be the host that actually serves, not one that redirects to it.
+    expect(url.host).toBe('www.ajaysparmar.com')
   })
 
   it('every metric carries a source, so numbers are always attributable', async () => {

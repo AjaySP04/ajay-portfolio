@@ -14,6 +14,12 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     '/resume': ['./public/resume/**/*'],
     '/resume/view': ['./public/resume/**/*'],
+    // OG image generation reads JetBrains Mono from the installed fontsource
+    // package; the tracer cannot see through a runtime path.join.
+    '/opengraph-image': ['./node_modules/@fontsource/jetbrains-mono/files/*.woff'],
+    '/projects/opengraph-image': ['./node_modules/@fontsource/jetbrains-mono/files/*.woff'],
+    '/projects/[slug]/opengraph-image': ['./node_modules/@fontsource/jetbrains-mono/files/*.woff'],
+    '/play/opengraph-image': ['./node_modules/@fontsource/jetbrains-mono/files/*.woff'],
   },
 
   async headers() {

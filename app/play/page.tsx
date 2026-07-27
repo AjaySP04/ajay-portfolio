@@ -8,6 +8,8 @@ export const metadata: Metadata = {
   title: 'Games',
   description:
     'Small, lightweight browser games built by Ajay Singh Parmar — starting with a keyboard-first sudoku whose generator guarantees a unique solution.',
+  alternates: { canonical: '/play' },
+  openGraph: { type: 'website', url: '/play', title: 'Games' },
 }
 
 export default function PlayPage() {
