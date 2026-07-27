@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { trackAttrs } from '@/lib/analytics/events'
+import { ChannelIcon } from '@/components/channel-icons'
 import { linkableChannels, site } from '@/content/site'
 
 export function SiteFooter() {
@@ -26,8 +27,9 @@ export function SiteFooter() {
               target="_blank"
               rel="noreferrer noopener me"
               {...trackAttrs('channel_clicked', { channel: channel.id, source: 'footer' })}
-              className="ease-console tracking-[0.1em] uppercase transition-colors duration-200 hover:text-accent-text"
+              className="ease-console inline-flex items-center gap-1.5 tracking-[0.1em] uppercase transition-colors duration-200 hover:text-accent-text"
             >
+              <ChannelIcon id={channel.id} className="size-3 shrink-0" />
               {channel.label}
             </a>
           ))}

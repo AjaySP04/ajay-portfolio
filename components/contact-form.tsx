@@ -14,6 +14,7 @@ type Copy = {
   successMessage: string
   unconfiguredMessage: string
   genericErrorMessage: string
+  noScriptMessage: string
 }
 
 /**
@@ -186,6 +187,21 @@ export function ContactForm({ copy }: { copy: Copy }) {
             src="https://challenges.cloudflare.com/turnstile/v0/api.js"
             strategy="lazyOnload"
           />
+          {/* <noscript> rather than a runtime check: the browser decides whether
+              to show this, so it costs nothing, needs no state, and cannot be
+              wrong. Rendered only alongside the widget — with no captcha
+              configured the form still works without JavaScript, and warning
+              about a check that is not running would be a lie. */}
+          <noscript>
+            <p className="flex items-start gap-2.5 rounded-sm border border-accent/40 bg-accent/[0.07] px-3 py-2.5 text-[13px] leading-relaxed text-fg">
+              <TriangleAlert
+                className="mt-0.5 size-3.5 shrink-0 text-accent-text"
+                strokeWidth={1.75}
+                aria-hidden="true"
+              />
+              {copy.noScriptMessage}
+            </p>
+          </noscript>
         </>
       ) : null}
 

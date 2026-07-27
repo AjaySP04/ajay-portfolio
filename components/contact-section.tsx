@@ -1,7 +1,8 @@
-import { ArrowUpRight, CalendarClock, MessageCircle, Phone } from 'lucide-react'
+import { CalendarClock, MessageCircle, Phone } from 'lucide-react'
 import { ContactForm } from '@/components/contact-form'
 import { Panel } from '@/components/panel'
 import { Section } from '@/components/section'
+import { ChannelIcon, hasChannelIcon } from '@/components/channel-icons'
 import { trackAttrs } from '@/lib/analytics/events'
 import { contact, visibleDirectChannels } from '@/content/contact'
 import { visibleChannels } from '@/content/site'
@@ -34,6 +35,7 @@ export function ContactSection() {
                 successMessage: contact.successMessage,
                 unconfiguredMessage: contact.unconfiguredMessage,
                 genericErrorMessage: contact.genericErrorMessage,
+                noScriptMessage: contact.noScriptMessage,
               }}
             />
           </div>
@@ -46,6 +48,9 @@ export function ContactSection() {
               <ul className="space-y-2">
                 {visibleDirectChannels.map((channel) => {
                   const Icon = ICONS[channel.icon]
+                  // WhatsApp has a real mark; 'phone' and 'calendar' are generic
+                  // affordances, so those keep the stroked lucide glyph.
+                  const brand = hasChannelIcon(channel.id)
                   return (
                     <li key={channel.id}>
                       <a
@@ -59,11 +64,18 @@ export function ContactSection() {
                         })}
                         className="ease-console group flex items-center gap-3 rounded-sm border border-hairline px-3 py-2.5 transition-colors duration-200 hover:border-hairline-strong hover:bg-elevated"
                       >
-                        <Icon
-                          className="size-4 shrink-0 text-accent-text"
-                          strokeWidth={1.75}
-                          aria-hidden="true"
-                        />
+                        {brand ? (
+                          <ChannelIcon
+                            id={channel.id}
+                            className="size-4 shrink-0 text-accent-text"
+                          />
+                        ) : (
+                          <Icon
+                            className="size-4 shrink-0 text-accent-text"
+                            strokeWidth={1.75}
+                            aria-hidden="true"
+                          />
+                        )}
                         <span className="min-w-0">
                           <span className="block font-mono text-[12px] tracking-[0.08em] text-fg uppercase">
                             {channel.label}
@@ -102,14 +114,15 @@ export function ContactSection() {
                         })}
                         className="ease-console inline-flex items-center gap-1.5 rounded-sm border border-hairline px-2.5 py-1.5 font-mono text-[11px] tracking-[0.08em] text-muted uppercase transition-colors duration-200 hover:border-hairline-strong hover:text-fg"
                       >
+                        <ChannelIcon id={channel.id} className="size-3.5 shrink-0" />
                         {channel.label}
-                        <ArrowUpRight className="size-3" strokeWidth={1.75} aria-hidden="true" />
                       </a>
                     ) : (
                       /* No profile URL to link to — see the note in the channel
                          schema. Rendered as text so the handle is still visible
                          and selectable, without a link that goes nowhere. */
                       <span className="inline-flex items-center gap-1.5 rounded-sm border border-hairline border-dashed px-2.5 py-1.5 font-mono text-[11px] tracking-[0.08em] text-muted uppercase">
+                        <ChannelIcon id={channel.id} className="size-3.5 shrink-0" />
                         {channel.label}
                         <span className="text-faint normal-case">{channel.handle}</span>
                       </span>

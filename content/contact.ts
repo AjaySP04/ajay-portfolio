@@ -45,6 +45,12 @@ const schema = z.object({
   /** Shown when the API reports delivery is not configured. */
   unconfiguredMessage: z.string().min(1),
   genericErrorMessage: z.string().min(1),
+  /**
+   * Shown only inside <noscript>, and only while a captcha is configured.
+   * Turnstile cannot mint a token without JavaScript, so the server refuses
+   * those submissions — this tells that visitor where to go instead.
+   */
+  noScriptMessage: z.string().min(1),
   /** Name of the honeypot field. Must look plausible to a naive bot. */
   honeypotField: z.string().min(1),
   fields: z.array(fieldSchema).length(3),
@@ -75,6 +81,8 @@ export const contact = schema.parse({
   unconfiguredMessage:
     'The form is not connected to a mail provider yet. Use WhatsApp or LinkedIn in the meantime.',
   genericErrorMessage: 'That did not go through. Try WhatsApp or LinkedIn instead.',
+  noScriptMessage:
+    'This form runs a bot check that needs JavaScript. With it turned off, use WhatsApp or LinkedIn below instead.',
   honeypotField: 'company_website',
   fields: [
     { name: 'name', label: 'Name', placeholder: 'Your name', maxLength: 100 },
