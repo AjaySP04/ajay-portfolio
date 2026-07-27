@@ -42,6 +42,13 @@ const navItemSchema = z.object({
 
 const siteSchema = z.object({
   name: z.string().min(1),
+  /**
+   * Canonical origin. The single source of truth for the domain — metadataBase,
+   * OG/canonical URLs and the contact email all read it from here, so moving
+   * domains is a one-line change rather than a hunt through six files.
+   * No trailing slash: `new URL()` composition doubles it otherwise.
+   */
+  url: z.url().refine((value) => !value.endsWith('/'), 'omit the trailing slash'),
   /** Positioning line. Deliberately not a resume job title — those appear
    *  only in the Experience section. */
   positioning: z.object({
@@ -78,6 +85,7 @@ export type Channel = z.infer<typeof channelSchema>
 
 export const site: Site = siteSchema.parse({
   name: 'Ajay Singh Parmar',
+  url: 'https://ajaysparmar.com',
   positioning: {
     role: 'Senior Developer',
     qualifier: 'Backend-heavy, full-stack, AI in production',
@@ -102,6 +110,7 @@ export const site: Site = siteSchema.parse({
     { id: 'experience', label: 'Experience', href: '/#experience' },
     { id: 'skills', label: 'Skills', href: '/#skills' },
     { id: 'projects', label: 'Projects', href: '/projects' },
+    { id: 'games', label: 'Games', href: '/play' },
     { id: 'contact', label: 'Contact', href: '/#contact' },
   ],
   heroActions: [

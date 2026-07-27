@@ -120,7 +120,14 @@ export async function POST(request: Request) {
   const receivedAt = new Date().toISOString().replace('T', ' ').slice(0, 16) + ' UTC'
 
   try {
-    const element = ContactMessageEmail({ name, email, message, receivedAt, clientIp: ip })
+    const element = ContactMessageEmail({
+      name,
+      email,
+      message,
+      receivedAt,
+      clientIp: ip,
+      domain: new URL(site.url).host,
+    })
     const [html, text] = await Promise.all([
       render(element),
       render(element, { plainText: true }),
@@ -128,7 +135,7 @@ export async function POST(request: Request) {
 
     const resend = new Resend(apiKey)
     const { error } = await resend.emails.send({
-      // Until ajaysparmar.tech is verified in Resend, onboarding@resend.dev is
+      // Until the domain is verified in Resend, onboarding@resend.dev is
       // the only sender that works. Override with CONTACT_FROM once it is.
       from: process.env.CONTACT_FROM?.trim() || 'Portfolio <onboarding@resend.dev>',
       to: [process.env.CONTACT_TO?.trim() || site.email],

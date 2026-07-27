@@ -24,6 +24,7 @@
   --p-on-accent: #08090b;
   --p-link: #5cc8ff;
   --p-live: #3fcf8e;
+  --p-danger: #f2666b;
 
   /* canvas needs channel triplets so it can vary alpha per edge */
   --graph-node-rgb: 138 145 153;
@@ -50,6 +51,7 @@
   --p-on-accent: #14161a;
   --p-link: #0a6e9e;
   --p-live: #0f7a4f;
+  --p-danger: #c02d33;
 
   --graph-node-rgb: 92 100 109;
   --graph-edge-rgb: 130 138 147;
@@ -80,6 +82,7 @@
   --color-on-accent: var(--p-on-accent);
   --color-link: var(--p-link);
   --color-live: var(--p-live);
+  --color-danger: var(--p-danger);
 
   /* Radius capped at 4px — sharp and deliberate. Overriding the whole
      scale means no `rounded-*` utility can escape the cap. */

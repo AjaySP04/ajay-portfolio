@@ -11,12 +11,15 @@ export function ContactMessageEmail({
   message,
   receivedAt,
   clientIp,
+  domain,
 }: {
   name: string
   email: string
   message: string
   receivedAt: string
   clientIp: string
+  /** Passed in rather than imported, so this stays a pure template. */
+  domain: string
 }) {
   const label = {
     fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
@@ -69,7 +72,7 @@ export function ContactMessageEmail({
                 color: '#14161a',
               }}
             >
-              New message · ajaysparmar.tech
+              New message · {domain}
             </p>
           </div>
 

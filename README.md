@@ -5,7 +5,8 @@ Personal site for Ajay Singh Parmar — senior developer, backend-heavy full-sta
 Built so that keeping it current is a content edit, not a code change: the résumé is one
 file at a fixed path, and every section reads from typed, build-validated content modules.
 
-Target domain: `ajaysparmar.tech` (Vercel).
+Domain: `ajaysparmar.com` (Vercel). Set once in `content/site.ts` as `site.url` — metadataBase,
+canonical/OG URLs and the contact email all read it from there.
 
 ---
 
@@ -158,6 +159,43 @@ server-side. It never fakes success, because that would silently lose real mail.
 The form has a real `action` and `method`, so it submits with JavaScript disabled — the handler
 answers a native post with a 303 to `/contact/sent`. That page is `noindex`, which is why
 Lighthouse reports SEO 60 for it; a form confirmation page should not be in search results.
+
+## Sudoku
+
+`lib/sudoku/` is a dependency-free engine: seeded RNG, backtracking solver with
+solution counting, a human-technique solver, and a generator. `/play/sudoku` is the UI.
+
+**Uniqueness is guaranteed by construction.** The generator carves clues from a complete grid
+and only removes one if exactly one solution survives, then re-proves uniqueness on the final
+grid with an independent solver before handing it over. A generator that emits a
+multi-solution puzzle even rarely is the worst bug available here — the player fills the grid
+correctly, the app calls it wrong, and it never reproduces. Hence `pnpm test` sweeps every
+difficulty across multiple seeds and asserts `countSolutions === 1` on all of them.
+
+**Difficulty is the hardest technique required, never clue count.** A 26-clue grid can be
+trivial and a 30-clue one can need an X-Wing. Each band has a floor *and* a ceiling:
+
+| Band | Requires |
+| --- | --- |
+| easy | naked/hidden singles only |
+| medium | a naked or hidden pair |
+| hard | locked candidates |
+| expert | a naked triple or an X-Wing |
+
+The floor is the part that matters. An earlier version enforced only a ceiling — and since
+every band permits singles, all four returned trivial puzzles and the difficulty selector did
+nothing. Two tests now assert the floor.
+
+Generation is **always async and cooperative on the main thread**. An expert puzzle is a
+median 2.5s of work; run synchronously that freezes the tab, so the generator yields via
+`scheduler.yield()` (or a timeout) between attempts. There is deliberately no synchronous
+variant: an `async` core defers at every `await`, so a "sync" wrapper could never observe its
+own result.
+
+Keyboard: arrows move, `1`–`9` place, `N` notes, `U`/`R` undo/redo, `X` mistake highlighting,
+`P` pause, `?` hint. Hints name the technique that unlocked the placement, and clear a wrong
+entry first rather than deducing around it. Progress and per-difficulty best times autosave to
+`localStorage`; history is deliberately not persisted.
 
 ## Design notes
 

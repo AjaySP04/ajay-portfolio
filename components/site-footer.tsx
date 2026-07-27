@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { site, visibleChannels } from '@/content/site'
 
 export function SiteFooter() {
@@ -8,6 +9,12 @@ export function SiteFooter() {
           © {new Date().getFullYear()} {site.name} · {site.location}
         </p>
         <nav aria-label="Elsewhere" className="flex flex-wrap gap-x-5 gap-y-2">
+          <Link
+            href="/play"
+            className="ease-console tracking-[0.1em] uppercase transition-colors duration-200 hover:text-accent-text"
+          >
+            Games
+          </Link>
           {visibleChannels.map((channel) => (
             <a
               key={channel.id}
