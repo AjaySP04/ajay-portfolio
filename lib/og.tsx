@@ -36,14 +36,19 @@ async function fonts() {
   return cached
 }
 
-const CANVAS = '#08090B'
-const HAIRLINE = '#1E2227'
-const FG = '#E7E9EC'
-const MUTED = '#8A9199'
+// Mirrors the light palette, because that is now the site's default look — a
+// near-black card next to a warm paper site reads as a different brand.
+const CANVAS = '#FDFCF9'
+const HAIRLINE = '#E7E0D2'
+const FG = '#1C1814'
+const MUTED = '#5A5147'
+/** Decorative only — the amber block. 3.26:1, too weak for text. */
 const ACCENT = '#F0A44A'
+/** The same amber darkened for legibility as text: 5.33:1 on canvas. */
+const ACCENT_TEXT = '#9A5A05'
 
 /**
- * The shared social card. Mirrors the site: near-black, hairline frame, mono
+ * The shared social card. Mirrors the site: warm paper, hairline frame, mono
  * type, one amber accent — so a shared link looks like the page it points at.
  */
 export async function renderOgImage({
@@ -93,7 +98,7 @@ export async function renderOgImage({
               fontSize: 22,
               letterSpacing: 4,
               textTransform: 'uppercase',
-              color: ACCENT,
+              color: ACCENT_TEXT,
               fontWeight: 400,
             }}
           >

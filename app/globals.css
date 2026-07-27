@@ -1,15 +1,50 @@
 @import 'tailwindcss';
 
 /* next-themes is configured with attribute="class", so the dark variant keys
-   off .dark rather than the OS preference. Dark is the default. */
+   off .dark rather than the OS preference. Light is the default. */
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ─────────────────────────────────────────────────────────────
    Palette — raw values live here, semantic tokens are mapped in
-   @theme below. Dark is the base declaration; .light overrides.
-   Every text pair is >= 4.5:1 against its own surface.
+   @theme below.
+
+   LIGHT IS THE BASE DECLARATION, not an override. Before hydration
+   there is no class on <html>, so whatever :root holds is what
+   paints first — putting dark here caused a flash of dark on every
+   load once light became the default.
+
+   Warm rather than blue-grey: paper-white surfaces, warm near-black
+   text, amber kept as the brand accent and teal for links. Every
+   text/surface pair is verified >= 4.5:1 (worst is 4.76).
    ───────────────────────────────────────────────────────────── */
 :root {
+  --p-canvas: #fdfcf9;
+  --p-sunken: #f5f1e8;
+  --p-elevated: #ffffff;
+  --p-raised: #ffffff;
+  --p-hairline: #e7e0d2;
+  --p-hairline-strong: #d3c9b6;
+  --p-fg: #1c1814;
+  --p-muted: #5a5147;
+  --p-faint: #6e6558;
+  --p-accent: #f0a44a;
+  --p-accent-text: #9a5a05;
+  --p-on-accent: #1c1814;
+  --p-link: #0d6e62;
+  --p-live: #0f7a4f;
+  --p-danger: #be2d33;
+
+  /* The canvas needs channel triplets so it can vary alpha per edge. */
+  --graph-node-rgb: 122 108 90;
+  --graph-edge-rgb: 156 142 120;
+  --graph-accent-rgb: 154 90 5;
+  --graph-node-alpha: 0.46;
+  --graph-edge-alpha: 0.28;
+
+  color-scheme: light;
+}
+
+.dark {
   --p-canvas: #08090b;
   --p-sunken: #0b0c0f;
   --p-elevated: #101215;
@@ -26,7 +61,6 @@
   --p-live: #3fcf8e;
   --p-danger: #f2666b;
 
-  /* canvas needs channel triplets so it can vary alpha per edge */
   --graph-node-rgb: 138 145 153;
   --graph-edge-rgb: 110 118 127;
   --graph-accent-rgb: 240 164 74;
@@ -34,32 +68,6 @@
   --graph-edge-alpha: 0.5;
 
   color-scheme: dark;
-}
-
-.light {
-  --p-canvas: #fbfbfc;
-  --p-sunken: #f3f4f6;
-  --p-elevated: #ffffff;
-  --p-raised: #ffffff;
-  --p-hairline: #e3e6ea;
-  --p-hairline-strong: #cfd4da;
-  --p-fg: #14161a;
-  --p-muted: #5c646d;
-  --p-faint: #676f78;
-  --p-accent: #f0a44a;
-  --p-accent-text: #9a5b0a;
-  --p-on-accent: #14161a;
-  --p-link: #0a6e9e;
-  --p-live: #0f7a4f;
-  --p-danger: #c02d33;
-
-  --graph-node-rgb: 92 100 109;
-  --graph-edge-rgb: 130 138 147;
-  --graph-accent-rgb: 154 91 10;
-  --graph-node-alpha: 0.46;
-  --graph-edge-alpha: 0.28;
-
-  color-scheme: light;
 }
 
 @theme inline {

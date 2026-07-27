@@ -19,7 +19,7 @@ canonical/OG URLs and the contact email all read it from there.
 | Styling | Tailwind CSS v4, CSS-first `@theme` | No JS config; theme tokens are plain custom properties |
 | Fonts | `next/font` — JetBrains Mono + Inter | Self-hosted at build time, no request to a font CDN |
 | Icons | `lucide-react` | |
-| Theme | `next-themes`, dark default | Light mode is a full mirror, not an afterthought |
+| Theme | `next-themes`, light default | Warm paper palette; dark is a full alternative, not an afterthought |
 | Validation | Zod | Content is parsed at build, so a malformed entry fails CI |
 | Deploy | Vercel | |
 
@@ -274,6 +274,26 @@ telemetry cost no client JS beyond the provider itself.
 **Known gap:** `resume_downloaded` fires on click, so a direct hit on `/resume` from a pasted
 link is not counted. Counting those needs `posthog-node` in the route handler; the client-side
 click covers the paths that actually get used.
+
+## Theming
+
+**Light is the default and `:root` holds the light tokens.** That ordering matters: before
+hydration there is no class on `<html>`, so whatever `:root` declares is what paints first —
+keeping dark there caused a flash of dark on every load once light became the default. `.dark`
+overrides.
+
+The palette is warm rather than blue-grey: paper-white surfaces, warm near-black text, amber as
+the brand accent and teal for links. Every text/surface pair is verified against WCAG AA — the
+worst is 4.76:1 — and Lighthouse's colour-contrast audit passes in both themes.
+
+**Nothing theme-dependent may be rendered in JS.** The server cannot know a visitor's stored
+theme, so choosing an icon or a mode-naming aria-label at render time is guaranteed to mismatch
+on hydration. That produced React #418 in production the moment light became the default: the
+server computed "dark" and the client resolved "light". The theme toggle therefore renders both
+icons and lets the `dark:` variant choose, with a label phrased to be true in either state. If
+you add anything else that varies by theme, do it in CSS.
+
+A chosen theme persists in `localStorage`; only visitors who have never chosen get light.
 
 ## Design notes
 

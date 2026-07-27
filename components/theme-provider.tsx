@@ -4,8 +4,8 @@ import type { ReactNode } from 'react'
 import { ThemeProvider as NextThemesProvider } from 'next-themes'
 
 /**
- * Dark is the default and is not derived from the OS — the site is designed
- * dark-first and light is an explicit opt-in via the toggle.
+ * Light is the default and is not derived from the OS. Dark is a full,
+ * first-class alternative reachable from the toggle — not a degraded mode.
  *
  * Reduced motion is handled without a JS provider: globals.css neutralises all
  * CSS animation and transition, gates the scroll-reveal behind
@@ -18,8 +18,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   return (
     <NextThemesProvider
       attribute="class"
-      defaultTheme="dark"
+      defaultTheme="light"
       enableSystem={false}
+      enableColorScheme={false}
       disableTransitionOnChange
     >
       {children}

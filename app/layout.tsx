@@ -59,9 +59,9 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  // Dark is the default and is not derived from the OS, so this is a single
-  // value rather than a prefers-color-scheme pair.
-  themeColor: '#08090B',
+  // A single value, matching the light --p-canvas: the theme is class-based, not
+  // derived from the OS, so keying this on prefers-color-scheme would be a lie.
+  themeColor: '#FDFCF9',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
