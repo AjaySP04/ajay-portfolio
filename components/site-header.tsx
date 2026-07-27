@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Mark } from '@/components/mark'
+import { LogoLockup } from '@/components/logo'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { trackAttrs } from '@/lib/analytics/events'
 import { site } from '@/content/site'
@@ -10,11 +10,9 @@ export function SiteHeader() {
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-6">
         <Link
           href="/"
-          className="ease-console inline-flex shrink-0 items-center gap-2.5 font-mono text-[13px] tracking-tight text-fg transition-colors duration-200 hover:text-accent-text"
+          className="ease-console shrink-0 text-fg transition-colors duration-200 hover:text-accent-text"
         >
-          <Mark className="size-4 text-accent-text" />
-          <span className="hidden sm:inline">{site.name.toLowerCase()}</span>
-          <span className="sm:hidden">asp</span>
+          <LogoLockup />
         </Link>
 
         {/* Hidden below lg: four labels plus the résumé link and toggle will not

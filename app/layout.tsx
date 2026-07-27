@@ -12,7 +12,22 @@ import { ConsentBar } from '@/components/analytics/consent-bar'
 import { StructuredData } from '@/components/structured-data'
 import './globals.css'
 
-const TITLE = `${site.name} — ${site.positioning.role}`
+// Names the city: "senior developer dubai" is a query a recruiter actually
+// types, and the name alone already has little competition.
+const TITLE = `${site.name} — ${site.positioning.role}, ${site.location.split(',')[0]}`
+
+/**
+ * Only emitted when a token is actually set. An empty
+ * <meta name="google-site-verification" content=""> is not a no-op: it can make
+ * Search Console report the property as incorrectly verified.
+ */
+const verification =
+  site.verification.google || site.verification.bing
+    ? {
+        ...(site.verification.google ? { google: site.verification.google } : {}),
+        ...(site.verification.bing ? { other: { 'msvalidate.01': site.verification.bing } } : {}),
+      }
+    : undefined
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -56,6 +71,7 @@ export const metadata: Metadata = {
     },
   },
   category: 'technology',
+  ...(verification ? { verification } : {}),
 }
 
 export const viewport: Viewport = {

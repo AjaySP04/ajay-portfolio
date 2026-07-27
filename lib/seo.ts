@@ -9,7 +9,7 @@ export function absoluteUrl(path = '/'): string {
  * Search engines and social cards want one description; humans want a sentence
  * that reads. This is the one place that decides what the site claims to be.
  */
-export const SITE_DESCRIPTION = `${site.positioning.role} — ${site.positioning.qualifier}. ${site.tagline[0]}`
+export const SITE_DESCRIPTION = `${site.positioning.role} in ${site.location.split(',')[0]} — ${site.positioning.qualifier}. ${site.tagline[0]}`
 
 export const SITE_KEYWORDS = [
   'Ajay Singh Parmar',

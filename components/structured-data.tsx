@@ -43,8 +43,10 @@ export function StructuredData() {
       ...skills.groups.flatMap((group) => group.items),
       ...about.domains,
     ],
-    // sameAs is what links these profiles into one entity for a knowledge panel.
-    sameAs: visibleChannels.map((channel) => channel.url),
+    // sameAs is what links these profiles into one entity for a knowledge panel,
+    // and what tells Google the old Jekyll site is the same person rather than a
+    // competing result.
+    sameAs: [...visibleChannels.map((channel) => channel.url), ...site.sameAs],
   }
 
   const website = {

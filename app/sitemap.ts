@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { deepDiveProjects } from '@/content/projects'
 import { games } from '@/content/games'
+import { site } from '@/content/site'
 import { absoluteUrl } from '@/lib/seo'
 
 /**
@@ -10,7 +11,14 @@ import { absoluteUrl } from '@/lib/seo'
  * (they stream a PDF, not a page), /whatsapp (a redirect) and /api/*.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date()
+  /**
+   * Derived from content, not from build time.
+   *
+   * A `lastmod` stamped with the build date claims every page changed on every
+   * deploy. Crawlers learn to distrust that, and it wastes crawl budget. This
+   * only moves when the résumé date in content/site.ts moves.
+   */
+  const now = new Date(`${site.resume.updatedAt}T00:00:00Z`)
 
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: absoluteUrl('/'), lastModified: now, changeFrequency: 'monthly', priority: 1 },

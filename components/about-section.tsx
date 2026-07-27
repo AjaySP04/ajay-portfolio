@@ -6,7 +6,7 @@ import { site } from '@/content/site'
 const LABEL = 'font-mono text-[10px] tracking-[0.18em] text-faint uppercase'
 
 export function AboutSection() {
-  const { summary, portrait, domains, education, interests, facts } = about
+  const { summary, outlook, quote, portrait, domains, education, interests, facts } = about
 
   return (
     <Section id="about" className="mt-24">
@@ -54,7 +54,25 @@ export function AboutSection() {
               {summary.map((paragraph) => (
                 <p key={paragraph}>{paragraph}</p>
               ))}
+
+              {/* Site copy rather than résumé text — the forward-looking half. */}
+              {outlook.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
             </div>
+
+            {/* Set apart deliberately: it is a stated point of view, not more
+                biography, so it should not read as another paragraph. */}
+            <figure className="border-t border-hairline bg-sunken/60 px-5 py-4">
+              <blockquote className="border-l-2 border-accent pl-4 font-mono text-[14px] leading-relaxed text-fg">
+                {quote.text}
+              </blockquote>
+              {/* Not uppercased: the transform mangles the transliteration's
+                  diacritics (TIRUKKUṚAḶ) and turns "c. 5th" into "C. 5TH". */}
+              <figcaption className="mt-2 pl-4 font-mono text-[11px] tracking-[0.08em] text-faint">
+                {quote.attribution} · {quote.era}
+              </figcaption>
+            </figure>
 
             <div className="grid flex-1 gap-px border-t border-hairline bg-hairline sm:grid-cols-2">
               <div className="bg-canvas p-5">

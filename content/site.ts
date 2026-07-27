@@ -75,6 +75,22 @@ const siteSchema = z.object({
     viewPath: z.string().startsWith('/'),
     updatedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   }),
+  /**
+   * Extra profiles for schema.org `sameAs`, never rendered as links.
+   *
+   * This is how Google is told "these URLs are the same person" so signals
+   * consolidate onto one entity instead of competing.
+   */
+  sameAs: z.array(z.url()),
+  /**
+   * Search-console ownership tokens. Left empty until the properties exist —
+   * an empty meta tag is worse than no meta tag, so they are only emitted when
+   * actually set.
+   */
+  verification: z.object({
+    google: z.string(),
+    bing: z.string(),
+  }),
   /** Section nav. Adding a section here is all it takes to surface it. */
   nav: z.array(navItemSchema).min(1),
   heroActions: z.array(actionSchema).min(1),
@@ -101,8 +117,11 @@ export const site: Site = siteSchema.parse({
   // flipped in Vercel to make the apex canonical, change it here too.
   url: 'https://www.ajaysparmar.com',
   positioning: {
-    role: 'Senior Developer',
-    qualifier: 'Backend-heavy, full-stack, AI in production',
+    // "Senior Engineer" is positioning, not a résumé title — those stay in the
+    // Experience section. Both claims below are verifiable from the résumé:
+    // the Audiomob RTB platform, and ML/LLM inference at Audiomob and KPTAC.
+    role: 'Senior Engineer',
+    qualifier: 'Real-time bidding · LLM inference · distributed systems at scale',
   },
   location: 'Dubai, United Arab Emirates',
   currentCompany: 'KPTAC Technologies',
@@ -122,6 +141,14 @@ export const site: Site = siteSchema.parse({
     downloadPath: '/resume',
     viewPath: '/resume/view',
     updatedAt: '2026-07-26',
+  },
+  sameAs: [
+    // The previous Jekyll site. Still live and cited in submitted applications.
+    'https://ajaysp04.github.io',
+  ],
+  verification: {
+    google: '',
+    bing: '',
   },
   nav: [
     { id: 'about', label: 'About', href: '/#about' },

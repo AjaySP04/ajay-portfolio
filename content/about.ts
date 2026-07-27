@@ -15,6 +15,16 @@ const factSchema = z.object({
 
 const schema = z.object({
   summary: z.array(z.string().min(1)).min(1),
+  /**
+   * Forward-looking paragraph. Unlike `summary` this is NOT résumé text — it is
+   * site copy, so it can be edited freely without breaking the verbatim claim.
+   */
+  outlook: z.array(z.string().min(1)).min(1),
+  quote: z.object({
+    text: z.string().min(1),
+    attribution: z.string().min(1),
+    era: z.string().min(1),
+  }),
   portrait: z.object({
     src: z.string().startsWith('/'),
     alt: z.string().min(1),
@@ -44,6 +54,27 @@ export const about = schema.parse({
   ],
   // 400px derivative of the 1400px master, which stays in the repo for the
   // Phase 7 OG image. Rendered at 200px, so this is the 2x asset.
+  outlook: [
+    'Ten years in, the interesting problems keep moving — mainframes to microservices to model inference — so I move with them. I would rather learn the next stack properly than defend the last one.',
+    'Right now that means treating LLMs as production infrastructure rather than a demo: measuring inference cost and latency, designing retrieval that holds up on real transactional data, and keeping a model call from becoming the slowest hop in an otherwise fast request path.',
+  ],
+  /**
+   * Tirukkuṛaḷ 423, by Valluvar — an ancient Tamil proverb with a named author,
+   * from a text that is 1,330 couplets of exactly this kind of worldly advice.
+   *
+   * Chosen over a Vedic hymn line because it is a proverb rather than a prayer,
+   * and over Āryabhaṭa's rotating-Earth verse because that was an argument, not
+   * an aphorism. The point here is judging a claim on its merit rather than on
+   * who made it — which is the whole job.
+   *
+   * Dating of the Kuṛaḷ is debated (roughly 300 BCE–500 CE); "c. 5th century CE"
+   * is the conservative common estimate.
+   */
+  quote: {
+    text: 'To discern the truth in everything, by whomsoever spoken, is wisdom.',
+    attribution: 'Valluvar',
+    era: 'Tirukkuṛaḷ 423, c. 5th century CE',
+  },
   portrait: {
     src: '/images/profile-400.jpg',
     alt: 'Ajay Singh Parmar',
@@ -59,9 +90,11 @@ export const about = schema.parse({
     extras: ['Committee member, Curiosity Club', 'Co-ordinator, Training & Placement Office'],
   },
   interests: [
+    'Automation tools for daily productivity',
     'Exploring cultures through travel',
     'Photography',
-    'Building automation tools',
+    'Bowling',
+    'Go-karting',
     'Badminton',
     'Cricket',
   ],

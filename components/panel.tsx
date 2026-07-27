@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react'
-import { Mark } from '@/components/mark'
 
 /**
  * The console panel: hairline frame, title bar, content well. Every section
@@ -24,7 +23,9 @@ export function Panel({
           id={headingId}
           className="inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.18em] text-fg uppercase"
         >
-          <Mark className="size-3.5 text-accent-text" />
+          {/* A neutral marker, not the logo: repeating the monogram on every
+              panel title would dilute it into a bullet point. */}
+          <span className="size-1.5 shrink-0 rotate-45 bg-accent" aria-hidden="true" />
           {title}
         </h2>
         {meta ? <p className="font-mono text-[11px] text-muted">{meta}</p> : null}
