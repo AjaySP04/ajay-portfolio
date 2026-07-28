@@ -61,15 +61,36 @@ const siteSchema = z.object({
    * No trailing slash: `new URL()` composition doubles it otherwise.
    */
   url: z.url().refine((value) => !value.endsWith('/'), 'omit the trailing slash'),
-  /** Positioning line. Deliberately not a resume job title — those appear
-   *  only in the Experience section. */
+  /**
+   * MACHINE-READABLE POSITIONING — not displayed anywhere on the page.
+   *
+   * This is what the <title>, the JSON-LD jobTitle fallback, the OG card kicker
+   * and the search description are built from, so it has to stay a job title and
+   * a list of specialisms. The hero's visible copy lives in `hero` below and is
+   * free prose; keeping the two apart is what lets the page read like a person
+   * wrote it while the metadata still reads like a job title to a crawler.
+   *
+   * Deliberately not a résumé job title either — those appear only in the
+   * Experience section.
+   */
   positioning: z.object({
     role: z.string().min(1),
     qualifier: z.string().min(1),
   }),
   location: z.string().min(1),
-  currentCompany: z.string().min(1),
-  tagline: z.array(z.string().min(1)).min(1),
+  /**
+   * Everything the hero renders, in order. All display copy, all free prose —
+   * change it without worrying about metadata.
+   */
+  hero: z.object({
+    /** Small mono line above the name. One entry per line. */
+    eyebrow: z.array(z.string().min(1)).min(1),
+    /**
+     * Body paragraphs. The first doubles as the closing sentence of the search
+     * description and the OG card subtitle, so keep it short and standalone.
+     */
+    intro: z.array(z.string().min(1)).min(1),
+  }),
   email: z.email(),
   mail: z.object({
     /**
@@ -129,20 +150,41 @@ export const site: Site = siteSchema.parse({
   // flipped in Vercel to make the apex canonical, change it here too.
   url: 'https://www.ajaysparmar.com',
   positioning: {
-    // "Senior Engineer" is positioning, not a résumé title — those stay in the
-    // Experience section. Both claims below are verifiable from the résumé:
-    // the Audiomob RTB platform, and ML/LLM inference at Audiomob and KPTAC.
-    role: 'Senior Engineer',
-    qualifier: 'Real-time bidding · LLM inference · distributed systems at scale',
+    /**
+     * Compound on purpose, and not a compromise.
+     *
+     * The verifiable evidence on this page — 10M+ daily auctions, 2K req/sec,
+     * ~100ms p99 — is distributed-systems evidence. A bare "AI Systems Engineer"
+     * invites "which AI systems at that scale?"; naming both makes a decade of
+     * backend depth the thing that qualifies the AI claim rather than something
+     * to explain away.
+     *
+     * Still not a résumé job title — those stay in the Experience section, and
+     * JSON-LD jobTitle deliberately reads the real one from there instead of
+     * this. Structured data is a factual channel.
+     */
+    role: 'Backend & AI Systems Engineer',
+    /**
+     * Every term is defensible from the résumé:
+     *   AI infrastructure — RAG pipelines and LLM integrations at KPTAC
+     *   Model serving     — the gRPC layer serving CTR/LTR/CPI models at
+     *                       Audiomob, inference latency down 30%
+     *   Retrieval         — RAG over transactional data at KPTAC
+     *   Distributed systems — the whole career
+     */
+    qualifier: 'AI infrastructure · Model serving · Retrieval · Distributed systems',
   },
   location: 'Dubai, United Arab Emirates',
-  currentCompany: 'KPTAC Technologies',
-  // Verbatim opening sentence of the résumé summary. The rest of the summary
-  // lives in the About section, in the résumé's own words — the hero used to
-  // carry a paraphrase of it, which just said the same thing twice.
-  tagline: [
-    'Senior full-stack engineer with 10+ years building scalable, cloud-native systems across AdTech, Hospitality, Healthtech, and Insurtech.',
-  ],
+  hero: {
+    // KPTAC is deliberately not named here. It is in the Experience section,
+    // which is the single source of truth for employers, and "since 2016" says
+    // more about seniority than a company a reviewer has not heard of.
+    eyebrow: ['Building AI Systems from Dubai', 'Shipping Production Software Since 2016'],
+    intro: [
+      'I build systems that survive production.',
+      "For the past decade I've engineered distributed backend platforms handling millions of requests. Today I'm applying those same engineering principles to production AI systems built around LLMs, retrieval, orchestration and reliable software.",
+    ],
+  },
   email: 'ajays.parmar04@gmail.com',
   mail: {
     from: 'Ajay Singh Parmar <hello@ajaysparmar.com>',
@@ -167,34 +209,42 @@ export const site: Site = siteSchema.parse({
     { id: 'experience', label: 'Experience', href: '/#experience' },
     { id: 'skills', label: 'Skills', href: '/#skills' },
     { id: 'projects', label: 'Projects', href: '/projects' },
-    { id: 'writing', label: 'Writing', href: '/writing' },
+    // "Notes", not "Engineering Notes": the nav is a single lg-and-up row of
+    // seven items, and 17 uppercase mono characters at 0.14em tracking overflows
+    // it. The section heading and page title carry the full name.
+    { id: 'writing', label: 'Notes', href: '/writing' },
     { id: 'games', label: 'Games', href: '/play' },
     { id: 'contact', label: 'Contact', href: '/#contact' },
   ],
+  /**
+   * Projects is primary because it is the only one of the three that answers
+   * "can he build?" rather than "what has he been paid to do?".
+   *
+   * "Read it here" is gone rather than demoted: /resume/view is still live and
+   * still linkable, and the hero reaches it from the filename line under these
+   * buttons. A fourth button for a second view of the same PDF is clutter.
+   */
   heroActions: [
     {
-      id: 'resume-download',
-      label: 'Download résumé',
-      href: '/resume',
+      id: 'projects',
+      label: 'View projects',
+      href: '/projects',
       variant: 'primary',
+      icon: 'arrow',
+    },
+    {
+      id: 'resume-download',
+      label: 'Résumé',
+      href: '/resume',
+      variant: 'secondary',
       icon: 'download',
     },
     {
-      id: 'resume-view',
-      label: 'Read it here',
-      href: '/resume/view',
-      variant: 'secondary',
-      icon: 'read',
-    },
-    // Phase 3 repoints this at /projects. Until that route exists it goes
-    // to the real source, rather than to a 404.
-    {
-      id: 'work',
-      label: 'See the work',
-      href: 'https://github.com/AjaySP04',
+      id: 'writing',
+      label: 'Engineering notes',
+      href: '/writing',
       variant: 'ghost',
-      icon: 'external',
-      external: true,
+      icon: 'read',
     },
   ],
   metrics: {

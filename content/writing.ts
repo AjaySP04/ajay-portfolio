@@ -141,9 +141,12 @@ function estimateReadingMinutes(item: string): number | null {
 export const HOMEPAGE_POST_COUNT = 3
 
 export const writing = {
-  heading: 'Writing',
+  // Renamed from "Writing" 2026-07-28. The ROUTE stays /writing: it is indexed,
+  // in the sitemap and in llms.txt, and renaming it would discard that for a
+  // cosmetic gain. Only the label changed.
+  heading: 'Engineering Notes',
   intro:
-    'Occasional deep-dives on the parts of backend work that are easy to get subtly wrong — concurrency, durability, the failure modes nobody demos.',
+    'Thoughts from building distributed systems, production AI software and backend platforms—covering the engineering decisions, tradeoffs and failure modes that rarely make it into tutorials.',
   profileUrl: MEDIUM_PROFILE,
   emptyMessage: 'Posts are on Medium.',
 } as const

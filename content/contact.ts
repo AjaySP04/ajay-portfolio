@@ -68,8 +68,12 @@ export const WHATSAPP_NUMBER = '971547611830'
 
 export const contact = schema.parse({
   heading: 'Contact',
+  // Leads with the work rather than with the transaction: "hiring, contract
+  // work" framed the section around what the visitor wants from me, which is the
+  // one place on the page that should be the other way round. The WhatsApp
+  // sentence stays — it is genuinely useful and the button is right there.
   intro:
-    'Hiring, contract work, or a question about something I have built — the form reaches my personal inbox. For anything time-sensitive, WhatsApp is fastest.',
+    "Interested in AI infrastructure, distributed systems or backend engineering? Whether you're hiring, collaborating or simply want to discuss architecture, I'd love to hear from you. For anything time-sensitive, WhatsApp is fastest.",
   // 'phone' stays in the icon union so a tel: entry can be re-added as pure
   // content later; there is deliberately no such entry today.
   formTitle: 'Send a message',

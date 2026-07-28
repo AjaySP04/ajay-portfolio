@@ -9,6 +9,6 @@ export default function Image() {
   return renderOgImage({
     kicker: site.positioning.role,
     title: site.name,
-    subtitle: site.tagline[0],
+    subtitle: site.hero.intro[0],
   })
 }

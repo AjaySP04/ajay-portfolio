@@ -23,11 +23,19 @@ const VARIANTS = {
 export function ActionLink({ action }: { action: HeroAction }) {
   const Icon = ICONS[action.icon]
 
-  // A hero CTA is either the résumé or an outbound profile link — never a
-  // project, so it must not pollute project_clicked.
+  /**
+   * Three kinds of hero CTA, three events.
+   *
+   * This used to send everything that was not the résumé to channel_clicked,
+   * which was fine while the third button pointed at GitHub. Now that Projects
+   * and Engineering Notes are internal routes, that would file them as outbound
+   * profile clicks and quietly corrupt the channel numbers.
+   */
   const tracking = action.href.startsWith('/resume')
     ? trackAttrs('resume_downloaded', { source: 'hero', variant: action.variant })
-    : trackAttrs('channel_clicked', { channel: action.id, source: 'hero' })
+    : action.external
+      ? trackAttrs('channel_clicked', { channel: action.id, source: 'hero' })
+      : trackAttrs('cta_clicked', { cta: action.id, source: 'hero', href: action.href })
 
   return (
     <a

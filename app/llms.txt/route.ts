@@ -89,7 +89,7 @@ export async function GET() {
   }
 
   if (posts.length > 0) {
-    lines.push('', '## Writing', '', `Published on Medium: ${MEDIUM_PROFILE}`, '')
+    lines.push('', '## Engineering Notes', '', `Published on Medium: ${MEDIUM_PROFILE}`, '')
     for (const post of posts) {
       const when = post.publishedAt ? post.publishedAt.slice(0, 10) : 'undated'
       lines.push(`- ${post.title} (${when}) — ${post.url}${post.tags.length ? ` [${post.tags.join(', ')}]` : ''}`)
@@ -100,7 +100,7 @@ export async function GET() {
   lines.push(`- ${absoluteUrl('/')} — home: positioning, career metrics, about, experience, skills, selected work, contact`)
   lines.push(`- ${absoluteUrl('/projects')} — all projects, filterable by category and stack`)
   if (posts.length > 0) {
-    lines.push(`- ${absoluteUrl('/writing')} — all technical writing, syndicated from Medium`)
+    lines.push(`- ${absoluteUrl('/writing')} — engineering notes, syndicated from Medium`)
   }
   lines.push(`- ${absoluteUrl('/play')} — browser games`)
   for (const game of games) {

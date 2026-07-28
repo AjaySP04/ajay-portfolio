@@ -6,6 +6,7 @@ export type AnalyticsEvent =
   | 'resume_downloaded'
   | 'project_clicked'
   | 'post_clicked'
+  | 'cta_clicked'
   | 'channel_clicked'
   | 'contact_submitted'
   | 'section_viewed'
@@ -17,6 +18,7 @@ export const ANALYTICS_EVENTS: AnalyticsEvent[] = [
   'resume_downloaded',
   'project_clicked',
   'post_clicked',
+  'cta_clicked',
   'channel_clicked',
   'contact_submitted',
   'section_viewed',

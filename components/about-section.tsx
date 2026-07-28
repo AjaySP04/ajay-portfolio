@@ -6,7 +6,7 @@ import { site } from '@/content/site'
 const LABEL = 'font-mono text-[10px] tracking-[0.18em] text-faint uppercase'
 
 export function AboutSection() {
-  const { summary, outlook, quote, portrait, domains, education, interests, facts } = about
+  const { summary, builds, outlook, quote, portrait, domains, education, interests, facts } = about
 
   return (
     <Section id="about" className="mt-24">
@@ -50,15 +50,37 @@ export function AboutSection() {
               taller left column forces, instead of leaving dead space and a
               divider that stops halfway down the panel. */}
           <div className="flex flex-col bg-canvas">
-            <div className="space-y-4 p-5 text-[15px] leading-relaxed text-muted md:text-base">
-              {summary.map((paragraph) => (
-                <p key={paragraph}>{paragraph}</p>
-              ))}
+            {/* Three labelled blocks rather than one run of paragraphs: who,
+                what, how. A reviewer skims for "what does he build" and
+                previously had to read five paragraphs to find it. */}
+            <div className="space-y-6 p-5">
+              <div className="space-y-4 text-[15px] leading-relaxed text-muted md:text-base">
+                <h3 className={LABEL}>Who I am</h3>
+                {summary.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+              </div>
 
-              {/* Site copy rather than résumé text — the forward-looking half. */}
-              {outlook.map((paragraph) => (
-                <p key={paragraph}>{paragraph}</p>
-              ))}
+              <div>
+                <h3 className={LABEL}>What I build</h3>
+                <dl className="mt-3 space-y-3">
+                  {builds.map((build) => (
+                    <div key={build.label} className="flex flex-col gap-1 sm:flex-row sm:gap-4">
+                      <dt className="shrink-0 font-mono text-[12px] tracking-[0.06em] text-fg sm:w-40">
+                        {build.label}
+                      </dt>
+                      <dd className="text-[14px] leading-relaxed text-muted">{build.detail}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+
+              <div className="space-y-4 text-[15px] leading-relaxed text-muted md:text-base">
+                <h3 className={LABEL}>How I think</h3>
+                {outlook.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+              </div>
             </div>
 
             {/* Set apart deliberately: it is a stated point of view, not more

@@ -5,15 +5,15 @@ import { PostList } from '@/components/post-list'
 import { getPosts, writing } from '@/content/writing'
 
 export const metadata: Metadata = {
-  title: 'Writing',
+  title: 'Engineering Notes',
   description:
     'Technical writing by Ajay Singh Parmar on Go concurrency, Redis persistence, and the backend failure modes that are easy to get subtly wrong.',
   alternates: { canonical: '/writing' },
   openGraph: {
     type: 'website',
     url: '/writing',
-    title: 'Writing',
-    description: 'Deep-dives on Go concurrency, Redis durability, and backend systems.',
+    title: 'Engineering Notes',
+    description: 'Engineering notes on Go concurrency, Redis durability, and backend systems.',
   },
 }
 
@@ -22,7 +22,11 @@ export default async function WritingPage() {
 
   return (
     <>
-      <PageHeader kicker={writing.heading} title="Notes on getting the details right" intro={writing.intro} />
+      <PageHeader
+        kicker={writing.heading}
+        title="The decisions that do not fit in a tutorial"
+        intro={writing.intro}
+      />
 
       <div className="mx-auto max-w-6xl px-6 pb-16">
         <div className="rounded-sm border border-hairline bg-elevated/60">
