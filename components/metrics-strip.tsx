@@ -23,7 +23,7 @@ export function MetricsStrip() {
         headingId="metrics-heading"
         meta={`${items.length} metrics · career to date`}
       >
-        <p className="flex items-start gap-2 border-b border-hairline bg-accent/[0.06] px-4 py-2.5 font-mono text-[11px] leading-relaxed text-accent-text">
+        <p className="flex items-start gap-2 border-b border-hairline bg-accent/[0.06] px-4 py-2.5 text-[11px] leading-relaxed text-accent-text">
           <TriangleAlert
             className="mt-px size-3.5 shrink-0"
             strokeWidth={1.75}
@@ -42,17 +42,17 @@ export function MetricsStrip() {
             >
               <div className="reveal" style={{ '--reveal-index': index } as CSSProperties}>
                 <p className="flex items-baseline gap-1.5">
-                  <span className="tnum font-mono text-[26px] leading-none font-medium tracking-[-0.02em] text-accent-text md:text-[30px]">
+                  <span className="tnum text-[26px] leading-none font-medium tracking-[-0.02em] text-accent-text md:text-[30px]">
                     {metric.value}
                   </span>
                   {metric.unit ? (
-                    <span className="font-mono text-xs text-muted">{metric.unit}</span>
+                    <span className="text-xs text-muted">{metric.unit}</span>
                   ) : null}
                 </p>
-                <p className="mt-3 font-mono text-[11px] tracking-[0.14em] text-fg uppercase">
+                <p className="mt-3 text-[11px] tracking-[0.06em] text-fg uppercase">
                   {metric.label}
                 </p>
-                <p className="mt-1 font-mono text-[11px] text-faint">{metric.source}</p>
+                <p className="mt-1 text-[11px] text-faint">{metric.source}</p>
               </div>
             </div>
           ))}

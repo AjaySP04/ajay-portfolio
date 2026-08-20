@@ -2,24 +2,30 @@ import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { ImageResponse } from 'next/og'
 import { site } from '@/content/site'
+import { palette } from '@/lib/palette'
+import { typeface } from '@/lib/typeface'
 
 export const OG_SIZE = { width: 1200, height: 630 }
 export const OG_CONTENT_TYPE = 'image/png'
 
 /**
- * JetBrains Mono, read from the installed fontsource package.
+ * The site's face, read from the installed fontsource package.
  *
- * Satori (behind ImageResponse) accepts ttf/otf/woff but NOT woff2, and
- * fontsource ships both — so this deliberately picks the .woff. Reading from
- * node_modules keeps the binary out of the repo and needs no network at build;
- * next.config.ts traces these files so the route also works if it ever renders
- * at request time.
+ * Satori cannot use next/font's handle or a system font — it has no font book to
+ * look in and needs an actual file on disk. So the same family is installed a
+ * second way, purely for OG rendering, and both are named in `lib/typeface.ts`
+ * so a swap cannot update one and forget the other.
+ *
+ * Satori accepts ttf/otf/woff but NOT woff2, and fontsource ships both — hence
+ * the explicit .woff. Reading from node_modules keeps the binary out of the repo
+ * and needs no network at build; next.config.ts traces these files so the route
+ * also works if it ever renders at request time.
  */
 const FONT_DIR = path.join(
   process.cwd(),
   'node_modules',
   '@fontsource',
-  'jetbrains-mono',
+  typeface.ogPackage,
   'files',
 )
 
@@ -28,28 +34,26 @@ let cached: { regular: Buffer; bold: Buffer } | null = null
 async function fonts() {
   if (!cached) {
     const [regular, bold] = await Promise.all([
-      readFile(path.join(FONT_DIR, 'jetbrains-mono-latin-400-normal.woff')),
-      readFile(path.join(FONT_DIR, 'jetbrains-mono-latin-700-normal.woff')),
+      readFile(path.join(FONT_DIR, `${typeface.ogPackage}-latin-400-normal.woff`)),
+      readFile(path.join(FONT_DIR, `${typeface.ogPackage}-latin-700-normal.woff`)),
     ])
     cached = { regular, bold }
   }
   return cached
 }
 
-// Mirrors the light palette, because that is now the site's default look — a
-// near-black card next to a warm paper site reads as a different brand.
-const CANVAS = '#FDFCF9'
-const HAIRLINE = '#E7E0D2'
-const FG = '#1C1814'
-const MUTED = '#5A5147'
-/** Decorative only — the amber block. 3.26:1, too weak for text. */
-const ACCENT = '#F0A44A'
-/** The same amber darkened for legibility as text: 5.33:1 on canvas. */
-const ACCENT_TEXT = '#9A5A05'
+// Imported, never redeclared: a card that hardcodes its own hexes silently
+// opts out of every future theme change. See lib/palette.ts.
+const { canvas: CANVAS, hairline: HAIRLINE, fg: FG, muted: MUTED } = palette
+/** Decorative only — the marker block. 2.09:1, far too weak for text. */
+const ACCENT = palette.amber
+/** Cyan darkened enough to read as text: 5.33:1 at worst. */
+const ACCENT_TEXT = palette.accentText
 
 /**
- * The shared social card. Mirrors the site: warm paper, hairline frame, mono
- * type, one amber accent — so a shared link looks like the page it points at.
+ * The shared social card. Mirrors the site: cool near-white, hairline frame,
+ * the site's own face, one amber marker — so a shared link looks like the page
+ * it points at.
  */
 export async function renderOgImage({
   kicker,
@@ -75,7 +79,7 @@ export async function renderOgImage({
           justifyContent: 'space-between',
           backgroundColor: CANVAS,
           padding: 64,
-          fontFamily: 'JetBrains Mono',
+          fontFamily: typeface.ogFamily,
           position: 'relative',
         }}
       >
@@ -152,8 +156,8 @@ export async function renderOgImage({
     {
       ...OG_SIZE,
       fonts: [
-        { name: 'JetBrains Mono', data: regular, weight: 400, style: 'normal' },
-        { name: 'JetBrains Mono', data: bold, weight: 700, style: 'normal' },
+        { name: typeface.ogFamily, data: regular, weight: 400, style: 'normal' },
+        { name: typeface.ogFamily, data: bold, weight: 700, style: 'normal' },
       ],
     },
   )

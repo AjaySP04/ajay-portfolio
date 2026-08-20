@@ -1,6 +1,6 @@
 import { CalendarClock, MessageCircle, Phone } from 'lucide-react'
 import { ContactForm } from '@/components/contact-form'
-import { Panel } from '@/components/panel'
+import { CollapsibleSection } from '@/components/collapsible-section'
 import { Section } from '@/components/section'
 import { ChannelIcon, hasChannelIcon } from '@/components/channel-icons'
 import { trackAttrs } from '@/lib/analytics/events'
@@ -16,14 +16,14 @@ const ICONS = {
 export function ContactSection() {
   return (
     <Section id="contact" className="mt-24">
-      <Panel title={contact.heading} headingId="contact-heading" meta="Replies to my personal inbox">
+      <CollapsibleSection title={contact.heading} headingId="contact-heading" meta="Replies to my personal inbox">
         <p className="border-b border-hairline px-5 py-4 text-[15px] leading-relaxed text-muted md:text-base">
           {contact.intro}
         </p>
 
         <div className="grid gap-px bg-hairline lg:grid-cols-[1fr_320px]">
           <div className="bg-canvas p-5">
-            <h3 className="mb-5 font-mono text-[10px] tracking-[0.18em] text-faint uppercase">
+            <h3 className="mb-5 text-[10px] tracking-[0.07em] text-faint uppercase">
               {contact.formTitle}
             </h3>
             <ContactForm
@@ -42,7 +42,7 @@ export function ContactSection() {
 
           <div className="flex flex-col gap-px bg-hairline">
             <div className="bg-canvas p-5">
-              <h3 className="mb-3 font-mono text-[10px] tracking-[0.18em] text-faint uppercase">
+              <h3 className="mb-3 text-[10px] tracking-[0.07em] text-faint uppercase">
                 {contact.directTitle}
               </h3>
               <ul className="space-y-2">
@@ -77,11 +77,11 @@ export function ContactSection() {
                           />
                         )}
                         <span className="min-w-0">
-                          <span className="block font-mono text-[12px] tracking-[0.08em] text-fg uppercase">
+                          <span className="block text-[12px] tracking-[0.08em] text-fg uppercase">
                             {channel.label}
                           </span>
                           {channel.value ? (
-                            <span className="block font-mono text-[11px] text-muted">
+                            <span className="block text-[11px] text-muted">
                               {channel.value}
                             </span>
                           ) : null}
@@ -97,7 +97,7 @@ export function ContactSection() {
                 taller, and the slack reads as intentional at the bottom of the
                 column rather than as a gap between two groups. */}
             <div className="flex-1 bg-canvas p-5">
-              <h3 className="mb-3 font-mono text-[10px] tracking-[0.18em] text-faint uppercase">
+              <h3 className="mb-3 text-[10px] tracking-[0.07em] text-faint uppercase">
                 {contact.elsewhereTitle}
               </h3>
               <ul className="flex flex-wrap gap-1.5">
@@ -112,7 +112,7 @@ export function ContactSection() {
                           channel: channel.id,
                           source: 'contact',
                         })}
-                        className="ease-console inline-flex items-center gap-1.5 rounded-sm border border-hairline px-2.5 py-1.5 font-mono text-[11px] tracking-[0.08em] text-muted uppercase transition-colors duration-200 hover:border-hairline-strong hover:text-fg"
+                        className="ease-console inline-flex items-center gap-1.5 rounded-sm border border-hairline px-2.5 py-1.5 text-[11px] tracking-[0.08em] text-muted uppercase transition-colors duration-200 hover:border-hairline-strong hover:text-fg"
                       >
                         <ChannelIcon id={channel.id} className="size-3.5 shrink-0" />
                         {channel.label}
@@ -121,7 +121,7 @@ export function ContactSection() {
                       /* No profile URL to link to — see the note in the channel
                          schema. Rendered as text so the handle is still visible
                          and selectable, without a link that goes nowhere. */
-                      <span className="inline-flex items-center gap-1.5 rounded-sm border border-hairline border-dashed px-2.5 py-1.5 font-mono text-[11px] tracking-[0.08em] text-muted uppercase">
+                      <span className="inline-flex items-center gap-1.5 rounded-sm border border-hairline border-dashed px-2.5 py-1.5 text-[11px] tracking-[0.08em] text-muted uppercase">
                         <ChannelIcon id={channel.id} className="size-3.5 shrink-0" />
                         {channel.label}
                         <span className="text-faint normal-case">{channel.handle}</span>
@@ -133,7 +133,7 @@ export function ContactSection() {
             </div>
           </div>
         </div>
-      </Panel>
+      </CollapsibleSection>
     </Section>
   )
 }

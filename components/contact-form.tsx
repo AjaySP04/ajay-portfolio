@@ -33,8 +33,16 @@ type State =
   | { kind: 'sent' }
   | { kind: 'failed'; message: string; fieldErrors: Record<string, string> }
 
+/**
+ * Soft-filled rather than outlined, after the Pages inspector fields: a sunken
+ * fill, a hairline border, and a cyan focus ring. The ring is the tell — a bare
+ * border-colour change on focus reads as a bug on a filled input, because there
+ * is no outline to notice.
+ */
 const INPUT =
-  'ease-console w-full rounded-sm border border-hairline bg-canvas px-3 py-2.5 font-sans text-[14px] text-fg transition-colors duration-200 outline-none placeholder:text-faint focus:border-accent'
+  'ease-console w-full rounded-lg border border-hairline bg-sunken px-3.5 py-3 text-[15px] text-fg transition-[color,background-color,border-color,box-shadow] duration-150 outline-none placeholder:text-faint hover:border-hairline-strong focus:border-accent focus:bg-elevated focus:ring-3 focus:ring-accent/22'
+
+const ERROR_RING = 'border-danger focus:border-danger focus:ring-danger/22'
 
 /**
  * Copy arrives as props, never imported: content/contact.ts pulls in zod at
@@ -94,7 +102,7 @@ export function ContactForm({ copy }: { copy: Copy }) {
     return (
       <p
         role="status"
-        className="flex items-start gap-2.5 rounded-sm border border-live/40 bg-live/[0.07] px-4 py-4 text-[14px] leading-relaxed text-fg"
+        className="flex items-start gap-2.5 rounded-lg border border-live/40 bg-live/[0.07] px-4 py-4 text-[14px] leading-relaxed text-fg"
       >
         <CircleCheck className="mt-0.5 size-4 shrink-0 text-live" strokeWidth={1.75} aria-hidden="true" />
         {copy.successMessage}
@@ -115,7 +123,7 @@ export function ContactForm({ copy }: { copy: Copy }) {
           <div key={field.name}>
             <label
               htmlFor={`contact-${field.name}`}
-              className="mb-1.5 block font-mono text-[10px] tracking-[0.18em] text-faint uppercase"
+              className="mb-2 block text-[13px] font-semibold text-fg"
             >
               {field.label}
             </label>
@@ -130,7 +138,7 @@ export function ContactForm({ copy }: { copy: Copy }) {
                 placeholder={field.placeholder}
                 aria-invalid={error ? true : undefined}
                 aria-describedby={error ? `contact-${field.name}-error` : undefined}
-                className={`${INPUT} resize-y`}
+                className={`${INPUT} min-h-28 resize-y ${error ? ERROR_RING : ''}`}
               />
             ) : (
               <input
@@ -143,13 +151,13 @@ export function ContactForm({ copy }: { copy: Copy }) {
                 placeholder={field.placeholder}
                 aria-invalid={error ? true : undefined}
                 aria-describedby={error ? `contact-${field.name}-error` : undefined}
-                className={INPUT}
+                className={`${INPUT} ${error ? ERROR_RING : ''}`}
               />
             )}
             {error ? (
               <p
                 id={`contact-${field.name}-error`}
-                className="mt-1.5 font-mono text-[11px] text-accent-text"
+                className="mt-2 text-[12px] text-danger"
               >
                 {error}
               </p>
@@ -193,7 +201,7 @@ export function ContactForm({ copy }: { copy: Copy }) {
               configured the form still works without JavaScript, and warning
               about a check that is not running would be a lie. */}
           <noscript>
-            <p className="flex items-start gap-2.5 rounded-sm border border-accent/40 bg-accent/[0.07] px-3 py-2.5 text-[13px] leading-relaxed text-fg">
+            <p className="flex items-start gap-2.5 rounded-lg border border-accent/40 bg-accent/[0.07] px-3 py-2.5 text-[13px] leading-relaxed text-fg">
               <TriangleAlert
                 className="mt-0.5 size-3.5 shrink-0 text-accent-text"
                 strokeWidth={1.75}
@@ -208,9 +216,9 @@ export function ContactForm({ copy }: { copy: Copy }) {
       {state.kind === 'failed' ? (
         <p
           role="alert"
-          className="flex items-start gap-2.5 rounded-sm border border-accent/40 bg-accent/[0.07] px-3 py-2.5 text-[13px] leading-relaxed text-fg"
+          className="flex items-start gap-2.5 rounded-lg border border-danger/40 bg-danger/[0.07] px-3 py-2.5 text-[13px] leading-relaxed text-fg"
         >
-          <TriangleAlert className="mt-0.5 size-3.5 shrink-0 text-accent-text" strokeWidth={1.75} aria-hidden="true" />
+          <TriangleAlert className="mt-0.5 size-3.5 shrink-0 text-danger" strokeWidth={1.75} aria-hidden="true" />
           {state.message}
         </p>
       ) : null}
@@ -218,7 +226,7 @@ export function ContactForm({ copy }: { copy: Copy }) {
       <button
         type="submit"
         disabled={sending}
-        className="ease-console inline-flex h-10 items-center gap-2 rounded-sm border border-accent bg-accent px-4 font-mono text-[12px] tracking-[0.12em] text-on-accent uppercase transition-colors duration-200 hover:bg-accent/88 disabled:cursor-not-allowed disabled:opacity-60"
+        className="ease-console inline-flex h-11 items-center gap-2 rounded-lg border border-accent bg-accent px-5 text-[14px] font-semibold text-on-accent transition-colors duration-200 hover:bg-accent/88 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {sending ? copy.submittingLabel : copy.submitLabel}
         <Send className="size-3.5 shrink-0" strokeWidth={1.75} aria-hidden="true" />

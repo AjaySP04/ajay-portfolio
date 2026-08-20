@@ -5,76 +5,142 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ─────────────────────────────────────────────────────────────
-   Palette — raw values live here, semantic tokens are mapped in
-   @theme below.
+   THE PALETTE — the single place colour is defined.
 
-   LIGHT IS THE BASE DECLARATION, not an override. Before hydration
-   there is no class on <html>, so whatever :root holds is what
-   paints first — putting dark here caused a flash of dark on every
-   load once light became the default.
+   Re-theming the site means editing this block and nothing else.
+   Nothing outside it may hardcode a colour: the canvas orb field
+   reads these custom properties at runtime, the CRT intro reads
+   them, and `lib/og.tsx` imports the shared constants that mirror
+   them. A literal hex anywhere else is a bug — it silently opts
+   that surface out of every future theme change.
 
-   Warm rather than blue-grey: paper-white surfaces, warm near-black
-   text, amber kept as the brand accent and teal for links. Every
-   text/surface pair is verified >= 4.5:1 (worst is 4.76).
+   LIGHT IS THE BASE DECLARATION, not an override. Before
+   hydration there is no class on <html>, so whatever :root holds
+   is what paints first — putting dark here caused a flash of dark
+   on every load once light became the default.
+
+   Cool near-white rather than warm paper: cyan accent, ink text
+   with a blue bias so the neutrals stay in the accent's family.
+
+   Every ink token was checked against every surface it can land
+   on, in both themes: 58 pairs, zero failures, worst 5.24 (light
+   danger-on-sunken). The live site's worst is 4.76, so this is an
+   improvement rather than a trade. Re-run the audit on any edit —
+   `--p-danger` started at #c8353f and measured 4.69 on sunken,
+   which passes AA but was a regression, and only showed up when
+   the audit was run against the real token block rather than the
+   shortlist it was picked from.
+
+   Two rules the contrast numbers force, both load-bearing:
+
+     1. A cyan fill carries DARK INK, never white. White on
+        #0BC0DC is 2.19:1 — a hard fail. Ink on it is 8.20:1.
+        Hence --p-on-accent is near-black in light mode.
+     2. Amber can never be a word. On the light canvas it measures
+        2.09:1 — every warm tone tested failed, the best being
+        3.67:1. It reads fine as text in dark mode (11.29:1), but a
+        token cannot be text in one theme and decoration in the
+        other, and light is the default. So it stays the section
+        marker and the warm orb tint. Never a link or a label.
    ───────────────────────────────────────────────────────────── */
 :root {
-  --p-canvas: #fdfcf9;
-  --p-sunken: #f5f1e8;
+  --p-canvas: #f6fdff;
+  --p-sunken: #e6f6fb;
   --p-elevated: #ffffff;
   --p-raised: #ffffff;
-  --p-hairline: #e7e0d2;
-  --p-hairline-strong: #d3c9b6;
-  --p-fg: #1c1814;
-  --p-muted: #5a5147;
-  --p-faint: #6e6558;
-  --p-accent: #f0a44a;
-  --p-accent-text: #9a5a05;
-  --p-on-accent: #1c1814;
-  --p-link: #0d6e62;
-  --p-live: #0f7a4f;
+  --p-hairline: #cde8f0;
+  --p-hairline-strong: #aed8e4;
+  --p-fg: #08191f;
+  --p-muted: #3f5a66;
+  --p-faint: #516e78;
+  --p-accent: #0bc0dc;
+  --p-on-accent: #08191f;
+  --p-accent-text: #086e80;
+  --p-link: #086e80;
+  --p-live: #0a7550;
   --p-danger: #be2d33;
+  /* Decorative only. Markers and orb tint — never text. */
+  --p-amber: #f59e0b;
 
-  /* The canvas needs channel triplets so it can vary alpha per edge. */
-  --graph-node-rgb: 122 108 90;
-  --graph-edge-rgb: 156 142 120;
-  --graph-accent-rgb: 154 90 5;
-  --graph-node-alpha: 0.46;
-  --graph-edge-alpha: 0.28;
+  /* The hero wash. A pale cyan gradient rather than a solid block, so the
+     orb field stays visible through it and navy-style heaviness never lands. */
+  --hero-bg: linear-gradient(158deg, #dff5fb 0%, #effafd 62%, #f6fdff 100%);
+  --hero-edge: #c6e8f1;
+  --hero-sphere: 6 110 128;
+  --hero-sphere-warm: 176 116 10;
+  --hero-sphere-a: 0.13;
+  --hero-sphere-rim: 0.26;
+  --hero-sphere-edge-a: 0.24;
+
+  /* The orb canvas needs channel triplets so it can vary alpha per orb and
+     per edge. Alpha is deliberately theme-bound: a light canvas needs the
+     field to be a whisper, a dark one can carry it. */
+  --sphere: 11 192 220;
+  --sphere-warm: 217 142 11;
+  --sphere-a: 0.1;
+  --sphere-rim: 0.18;
+  --sphere-edge-a: 0.2;
+
+  /* Page-load intro. Graphite, not cyan — a coloured ground reads as a brand
+     splash screen; grey reads as a surface the page is being uncovered from.
+     Identical in both themes: it needs no per-theme handling, and a ground that
+     matched the canvas would make the reveal invisible. */
+  --intro-ground: #8b98a3;
+  --intro-ground-2: #9eabb5;
+  --intro-ground-3: #b4bfc8;
+  --intro-mark: #f7f9fb;
 
   color-scheme: light;
 }
 
 .dark {
-  --p-canvas: #08090b;
-  --p-sunken: #0b0c0f;
-  --p-elevated: #101215;
-  --p-raised: #16191d;
-  --p-hairline: #1e2227;
-  --p-hairline-strong: #2c3238;
-  --p-fg: #e7e9ec;
-  --p-muted: #8a9199;
-  --p-faint: #7b828a;
-  --p-accent: #f0a44a;
-  --p-accent-text: #f0a44a;
-  --p-on-accent: #08090b;
-  --p-link: #5cc8ff;
-  --p-live: #3fcf8e;
-  --p-danger: #f2666b;
+  --p-canvas: #05131a;
+  --p-sunken: #071a22;
+  --p-elevated: #0b2229;
+  --p-raised: #102b33;
+  --p-hairline: #17333d;
+  --p-hairline-strong: #244854;
+  --p-fg: #e4f6fa;
+  --p-muted: #93b7c2;
+  --p-faint: #7fa5b2;
+  --p-accent: #22d3ee;
+  --p-on-accent: #03121a;
+  --p-accent-text: #38dbf0;
+  --p-link: #38dbf0;
+  --p-live: #34d399;
+  --p-danger: #fb7185;
+  --p-amber: #fbbf24;
 
-  --graph-node-rgb: 138 145 153;
-  --graph-edge-rgb: 110 118 127;
-  --graph-accent-rgb: 240 164 74;
-  --graph-node-alpha: 0.75;
-  --graph-edge-alpha: 0.5;
+  --hero-bg: linear-gradient(158deg, #0b2e38 0%, #071d26 62%, #05131a 100%);
+  --hero-edge: #17333d;
+  --hero-sphere: 86 220 240;
+  --hero-sphere-warm: 251 191 36;
+  --hero-sphere-a: 0.22;
+  --hero-sphere-rim: 0.44;
+  --hero-sphere-edge-a: 0.4;
+
+  --sphere: 34 211 238;
+  --sphere-warm: 251 191 36;
+  --sphere-a: 0.3;
+  --sphere-rim: 0.55;
+  --sphere-edge-a: 0.46;
 
   color-scheme: dark;
 }
 
 @theme inline {
-  /* Type — the mono/sans split is the identity. Mono carries every
-     header, label, metric and nav item; Inter carries prose only. */
-  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  /* One family, one token. The mono/sans split used to be the identity.
+
+     Self-hosted by next/font. `--font-site` is deliberately family-agnostic:
+     see lib/typeface.ts, which is the one place the face is named. Arial stays
+     in the fallback so the `swap` period renders in similar metrics, not Times.
+
+     There is deliberately no --font-mono. It was aliased to the sans stack
+     while the 87 `font-mono` usages were removed file by file — pointing it at
+     the browser's default monospace instead would have left the site visibly
+     broken at every intermediate commit — and it went away with the last one.
+     Numeric alignment is `.tnum` now, not a monospaced face. */
+  --font-sans: var(--font-site), 'Helvetica Neue', Arial, Helvetica, sans-serif;
 
   --color-canvas: var(--p-canvas);
   --color-sunken: var(--p-sunken);
@@ -91,17 +157,19 @@
   --color-link: var(--p-link);
   --color-live: var(--p-live);
   --color-danger: var(--p-danger);
+  --color-amber: var(--p-amber);
 
-  /* Radius capped at 4px — sharp and deliberate. Overriding the whole
-     scale means no `rounded-*` utility can escape the cap. */
-  --radius-xs: 2px;
-  --radius-sm: 2px;
-  --radius-md: 3px;
-  --radius-lg: 4px;
-  --radius-xl: 4px;
-  --radius-2xl: 4px;
-  --radius-3xl: 4px;
-  --radius-4xl: 4px;
+  /* Softened site-wide. Overriding the whole scale means no `rounded-*`
+     utility can escape the cap — the same mechanism that used to pin
+     everything at 4px now pins it at 14px. */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+  --radius-2xl: 14px;
+  --radius-3xl: 14px;
+  --radius-4xl: 14px;
 
   --ease-console: cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -132,10 +200,11 @@
   :focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
-    border-radius: 2px;
+    border-radius: var(--radius-sm);
   }
 
-  /* Tabular figures everywhere numbers are compared vertically. */
+  /* Tabular figures everywhere numbers are compared vertically. With the
+     mono face gone, this is the only thing keeping columns aligned. */
   .tnum {
     font-variant-numeric: tabular-nums;
     font-feature-settings: 'tnum' 1;
@@ -143,9 +212,10 @@
 }
 
 /* ─────────────────────────────────────────────────────────────
-   Reduced motion — wired globally from the start, not bolted on.
-   Kills CSS animation/transition and smooth scrolling; the canvas
-   background reads the same media query and renders a static frame.
+   Reduced motion — wired globally, not bolted on. Kills CSS
+   animation/transition and smooth scrolling; the orb canvas reads
+   the same media query and renders a static frame, and the CRT
+   intro removes itself entirely rather than shortening.
    ───────────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -170,9 +240,6 @@
    failed chunk or an older browser therefore degrades to plain
    visible content — never to a blank panel.
 
-   `--reveal-index` stretches each item's range a little further so a
-   row of them cascades instead of arriving as one block.
-
    Transform only — deliberately no opacity. A scroll-driven animation is
    position-bound and reversible, so a reader who stops mid-scroll parks the
    element wherever the range puts it. Fading would make partial opacity a
@@ -192,5 +259,197 @@
 @keyframes reveal {
   from {
     transform: translateY(10px);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Page-load intro — the mark spins up, then opens as a circle.
+
+   800ms, once per document load. The monogram doing the opening
+   says something about whose site this is; the shutter wipe it
+   replaced said only "a page is loading".
+
+   Three phases, and the order matters. The mark ARRIVES first and
+   holds still long enough to be read as a mark (0–34%); only then
+   does it spin and open the page (34–100%). Spinning from the
+   first frame made it unreadable — the eye never resolved what the
+   shape was before it started moving, so the logo registered as a
+   loading spinner rather than as an identity.
+
+   The opening is a radial mask on the ground with an animated
+   stop, which needs `@property` to interpolate a custom property
+   of type <percentage> — a plain `--x: 0% -> 80%` is a discrete
+   swap, not an animation.
+
+   The ground ALSO fades over the last third. That is the safety
+   net, not a flourish: if `@property` is unsupported the mask stop
+   never moves and the ground would sit opaque over the page
+   forever. With the fade, an unsupporting browser degrades to a
+   soft cross-fade — a worse reveal, but the page always opens.
+   Never let a decorative layer be the only thing standing between
+   the reader and the content.
+
+   Rotation carries the same easing as the opening; a linear spin
+   against an eased expansion reads as skidding even though the eye
+   cannot name why.
+
+   `pointer-events: none` throughout and a final `visibility:
+   hidden` under `forwards`, so it can never intercept a click even
+   if a keyframe is interrupted. Reduced motion removes it outright
+   rather than shortening it.
+   ───────────────────────────────────────────────────────────── */
+@property --intro-iris {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 0%;
+}
+
+.intro {
+  --intro-duration: 800ms;
+  --intro-size: 92px;
+  --intro-glide: cubic-bezier(0.45, 0, 0.2, 1);
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  overflow: hidden;
+  animation: intro-end var(--intro-duration) step-end forwards;
+}
+
+.intro-ground {
+  position: absolute;
+  inset: 0;
+  background: var(--intro-ground);
+  /* Transparent inside the growing circle, opaque outside it. The second stop
+     sits a hair beyond the first so the edge is soft rather than aliased. */
+  mask-image: radial-gradient(
+    circle at 50% 50%,
+    transparent var(--intro-iris),
+    #000 calc(var(--intro-iris) + 1.2%)
+  );
+  animation: intro-open var(--intro-duration) linear forwards;
+}
+
+.intro-wheel {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--intro-size);
+  height: var(--intro-size);
+  margin-top: calc(var(--intro-size) / -2);
+  margin-left: calc(var(--intro-size) / -2);
+  animation: intro-bloom var(--intro-duration) linear forwards;
+}
+
+.intro-wheel-spin {
+  animation: intro-spin var(--intro-duration) linear forwards;
+}
+
+@keyframes intro-open {
+  0%,
+  34% {
+    --intro-iris: 0%;
+    opacity: 1;
+    animation-timing-function: var(--intro-glide);
+  }
+  72% {
+    opacity: 1;
+  }
+  100% {
+    /* Past the farthest corner, so the hole clears the viewport at any ratio. */
+    --intro-iris: 82%;
+    opacity: 0;
+  }
+}
+
+/* The mark grows with the opening and dissolves into it, rather than sitting
+   at a fixed size while the page arrives around it. */
+@keyframes intro-bloom {
+  0% {
+    transform: scale(0.72);
+    opacity: 0;
+    animation-timing-function: var(--intro-glide);
+  }
+  /* Arrived and settled. The hold from here to 34% is what lets the mark be
+     read as a mark before it becomes motion. */
+  20% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  34% {
+    transform: scale(1);
+    opacity: 1;
+    animation-timing-function: var(--intro-glide);
+  }
+  100% {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}
+
+@keyframes intro-spin {
+  0%,
+  34% {
+    transform: rotate(0deg);
+    animation-timing-function: var(--intro-glide);
+  }
+  100% {
+    transform: rotate(400deg);
+  }
+}
+
+@keyframes intro-end {
+  0%,
+  99% {
+    visibility: visible;
+  }
+  100% {
+    visibility: hidden;
+  }
+}
+
+/* Removed outright, not shortened. The global reduced-motion block collapses
+   every animation to 0.01ms, which would leave the ground parked over the page
+   at its final frame — so this has to hide the element itself. */
+@media (prefers-reduced-motion: reduce) {
+  .intro {
+    display: none;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Collapsible sections — native <details>.
+
+   `interpolate-size` is what makes `block-size: auto` animatable;
+   without it the panel snaps. Both are wrapped in @supports so a
+   browser lacking either degrades to an instant open/close rather
+   than to a broken panel, and reduced motion opts out entirely.
+   ───────────────────────────────────────────────────────────── */
+.accordion > summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+.accordion > summary::-webkit-details-marker {
+  display: none;
+}
+
+@supports (interpolate-size: allow-keywords) {
+  @media (prefers-reduced-motion: no-preference) {
+    :root {
+      interpolate-size: allow-keywords;
+    }
+
+    .accordion::details-content {
+      block-size: 0;
+      overflow: hidden;
+      transition:
+        block-size 280ms var(--ease-console),
+        content-visibility 280ms allow-discrete;
+    }
+
+    .accordion[open]::details-content {
+      block-size: auto;
+    }
   }
 }

@@ -65,14 +65,14 @@ export function ConsentBar() {
           <button
             type="button"
             onClick={() => void decide('granted')}
-            className="ease-console inline-flex h-9 items-center rounded-sm border border-accent bg-accent px-3 font-mono text-[11px] tracking-[0.1em] text-on-accent uppercase transition-colors duration-200 hover:bg-accent/88"
+            className="ease-console inline-flex h-9 items-center rounded-sm border border-accent bg-accent px-3 text-[11px] tracking-[0.05em] text-on-accent uppercase transition-colors duration-200 hover:bg-accent/88"
           >
             Allow
           </button>
           <button
             type="button"
             onClick={() => void decide('anonymous')}
-            className="ease-console inline-flex h-9 items-center gap-1.5 rounded-sm border border-hairline px-3 font-mono text-[11px] tracking-[0.1em] text-muted uppercase transition-colors duration-200 hover:border-hairline-strong hover:text-fg"
+            className="ease-console inline-flex h-9 items-center gap-1.5 rounded-sm border border-hairline px-3 text-[11px] tracking-[0.05em] text-muted uppercase transition-colors duration-200 hover:border-hairline-strong hover:text-fg"
           >
             <X className="size-3.5" strokeWidth={1.75} aria-hidden="true" />
             Keep it anonymous

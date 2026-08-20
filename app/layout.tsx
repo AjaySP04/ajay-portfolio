@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
-import { inter, jetbrainsMono } from '@/app/fonts'
-import { NodeGraphBackground } from '@/components/node-graph-background'
+import { siteFont } from '@/app/fonts'
+import { LogoIntro } from '@/components/logo-intro'
+import { SphereField } from '@/components/sphere-field'
 import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
 import { ThemeProvider } from '@/components/theme-provider'
@@ -10,6 +11,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import { AnalyticsProvider } from '@/components/analytics/analytics-provider'
 import { ConsentBar } from '@/components/analytics/consent-bar'
 import { StructuredData } from '@/components/structured-data'
+import { palette } from '@/lib/palette'
 import './globals.css'
 
 // Names the city: "senior developer dubai" is a query a recruiter actually
@@ -75,28 +77,31 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  // A single value, matching the light --p-canvas: the theme is class-based, not
+  // A single value, matching the light canvas: the theme is class-based, not
   // derived from the OS, so keying this on prefers-color-scheme would be a lie.
-  themeColor: '#FDFCF9',
+  // Read from lib/palette rather than written out, so a re-theme cannot leave
+  // the browser chrome behind on the old colour.
+  themeColor: palette.canvas,
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-      className={`${inter.variable} ${jetbrainsMono.variable}`}
-    >
+    <html lang="en" suppressHydrationWarning className={siteFont.variable}>
       <body className="min-h-dvh">
+        {/* Before anything else in the body, and outside ThemeProvider: it is a
+            static server-rendered element whose animation runs from first paint.
+            Gating it behind a client provider would flash the finished page and
+            only then play the intro. */}
+        <LogoIntro />
         <StructuredData />
         <ThemeProvider>
           <a
             href="#main"
-            className="sr-only rounded-sm border border-accent bg-canvas px-4 py-2 font-mono text-[12px] tracking-[0.12em] uppercase focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50"
+            className="sr-only rounded-sm border border-accent bg-canvas px-4 py-2 text-[12px] tracking-[0.06em] uppercase focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50"
           >
             Skip to content
           </a>
-          <NodeGraphBackground />
+          <SphereField />
           <div className="relative flex min-h-dvh flex-col">
             <SiteHeader />
             <main id="main" className="flex-1">

@@ -1,9 +1,12 @@
 import type { ReactNode } from 'react'
 
 /**
- * The console panel: hairline frame, title bar, content well. Every section
- * from Phase 2 onward hangs off this, which is what keeps the site reading as
- * one instrument rather than a stack of unrelated blocks.
+ * The static panel: hairline frame, title bar, content well.
+ *
+ * Kept alongside `CollapsibleSection` for the two places that must *not*
+ * collapse — the metrics strip, which is the page's credibility proof, and the
+ * project deep-dive pages, where a collapsed body would hide the whole reason
+ * the route exists. Everything else on the homepage is collapsible.
  */
 export function Panel({
   title,
@@ -17,18 +20,17 @@ export function Panel({
   children: ReactNode
 }) {
   return (
-    <div className="rounded-sm border border-hairline bg-elevated/60">
-      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-hairline px-4 py-3">
+    <div className="rounded-2xl border border-hairline bg-elevated/60">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-hairline px-4 py-3.5">
         <h2
           id={headingId}
-          className="inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.18em] text-fg uppercase"
+          className="inline-flex items-center gap-2.5 text-[11px] font-bold tracking-[0.07em] text-fg uppercase"
         >
-          {/* A neutral marker, not the logo: repeating the monogram on every
-              panel title would dilute it into a bullet point. */}
-          <span className="size-1.5 shrink-0 rotate-45 bg-accent" aria-hidden="true" />
+          {/* Amber's one job: a marker, never a word. */}
+          <span className="size-1.5 shrink-0 rotate-45 bg-amber" aria-hidden="true" />
           {title}
         </h2>
-        {meta ? <p className="font-mono text-[11px] text-muted">{meta}</p> : null}
+        {meta ? <p className="text-[11px] text-muted">{meta}</p> : null}
       </div>
       {children}
     </div>

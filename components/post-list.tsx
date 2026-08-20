@@ -47,7 +47,7 @@ export function PostList({
               />
             </div>
 
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] text-faint">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-faint">
               {post.publishedAt ? (
                 <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
               ) : null}

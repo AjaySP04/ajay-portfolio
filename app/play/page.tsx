@@ -30,7 +30,7 @@ export default function PlayPage() {
           {games.map((game) => (
             <li key={game.slug}>
               <article className="flex h-full flex-col rounded-sm border border-hairline bg-canvas">
-                <header className="flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-hairline px-4 py-2.5 font-mono text-[11px] tracking-[0.14em] uppercase">
+                <header className="flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-hairline px-4 py-2.5 text-[11px] tracking-[0.06em] uppercase">
                   <span className="inline-flex items-center gap-2 text-fg">
                     <span
                       className={`size-1.5 rounded-full ${
@@ -44,7 +44,7 @@ export default function PlayPage() {
 
                 <div className="flex flex-1 flex-col gap-4 p-4">
                   <div>
-                    <h2 className="font-mono text-[17px] font-medium tracking-tight text-fg">
+                    <h2 className="text-[17px] font-medium tracking-tight text-fg">
                       <Link
                         href={game.href}
                         className="ease-console transition-colors duration-200 hover:text-accent-text"
@@ -59,7 +59,7 @@ export default function PlayPage() {
                     {game.highlights.map((highlight) => (
                       <li
                         key={highlight}
-                        className="flex gap-2.5 font-mono text-[11px] text-muted"
+                        className="flex gap-2.5 text-[11px] text-muted"
                       >
                         <span
                           className="mt-[5px] size-1 shrink-0 rotate-45 bg-faint"
@@ -74,7 +74,7 @@ export default function PlayPage() {
                 <footer className="border-t border-hairline px-4 py-3">
                   <Link
                     href={game.href}
-                    className="ease-console inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.14em] text-accent-text uppercase transition-colors duration-200 hover:text-fg"
+                    className="ease-console inline-flex items-center gap-2 text-[11px] tracking-[0.06em] text-accent-text uppercase transition-colors duration-200 hover:text-fg"
                   >
                     Play {game.title}
                     <ArrowRight className="size-3.5" strokeWidth={1.75} aria-hidden="true" />

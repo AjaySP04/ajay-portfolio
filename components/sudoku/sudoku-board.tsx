@@ -81,7 +81,7 @@ export function SudokuBoard({
                   tabIndex={-1}
                   disabled={disabled}
                   onClick={() => onSelect(index)}
-                  className={`ease-console relative aspect-square border-r border-b border-hairline ${background} ${tone} font-mono transition-colors duration-100 ${
+                  className={`ease-console relative aspect-square border-r border-b border-hairline ${background} ${tone} transition-colors duration-100 ${
                     selected ? 'ring-1 ring-accent ring-inset' : ''
                   }`}
                 >
