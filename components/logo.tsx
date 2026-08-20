@@ -49,8 +49,12 @@ export function LogoMark({
  * The monogram on a filled plate.
  *
  * For avatar contexts — GitHub, LinkedIn, a browser tab — where a stroke-only
- * mark has no presence against an arbitrary background. Radius 4 is the design
- * system's cap.
+ * mark has no presence against an arbitrary background.
+ *
+ * Kept square-ish rather than switched to the disc the favicon uses: at avatar
+ * sizes a plate reads as a badge, and `app/icon.svg` already covers the tiny
+ * end. If this and the favicon ever need to match exactly, change both — the
+ * SVG file cannot read these tokens.
  */
 export function LogoTile({ className }: { className?: string }) {
   return (
@@ -63,11 +67,55 @@ export function LogoTile({ className }: { className?: string }) {
   )
 }
 
-/** Name only, set in the mono face that carries the site's identity. */
+/**
+ * The monogram inside a ring — the mark as a wheel.
+ *
+ * Exists for the page-load intro, where the mark rolls across the screen. The
+ * ring is what makes that legible: a bare monogram spinning reads as a glitch,
+ * because nothing about its silhouette suggests a thing that *can* roll. A
+ * circle does, and the rotating monogram inside it then reads as the spoke.
+ *
+ * The ring is drawn in `currentColor` at a lighter weight than the letterforms
+ * so it frames rather than competes.
+ */
+export function LogoWheel({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 32 32" className={className} fill="none" aria-hidden="true" focusable="false">
+      <circle
+        cx="16"
+        cy="16"
+        r="14.4"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        opacity="0.55"
+      />
+      {/* A single tick at the top: without it a symmetrical ring gives the eye
+          nothing to track and the rotation is invisible. */}
+      <path d="M16 1.6 V5.2" stroke="var(--color-amber)" strokeWidth="1.8" strokeLinecap="butt" />
+      {/* Pivots on the monogram's own bounding-box centre (15, 16.25), not on
+          the viewBox centre. The mark is not symmetrical — the P's bowl pushes
+          it right and the A's foot pushes it down — so scaling about (16, 16)
+          leaves it visibly off-axis inside the ring. Imperceptible at 92px,
+          obvious once the intro blooms it to 2.8x. */}
+      <g transform="translate(16 16) scale(0.6) translate(-15 -16.25)">
+        <MonogramPaths stroke={4.2} bowl="var(--color-amber)" />
+      </g>
+    </svg>
+  )
+}
+
+/**
+ * Name only, rendered exactly as `site.name` spells it.
+ *
+ * This used to force lowercase, which was a deliberate affectation while the
+ * wordmark was set in JetBrains Mono — lowercase mono reads as a considered
+ * lockup. In the system Helvetica/Arial stack it just reads as a typo in
+ * someone's own name, so it renders capitalised.
+ */
 export function LogoWordmark({ className }: { className?: string }) {
   return (
-    <span className={`tracking-tight whitespace-nowrap ${className ?? ''}`}>
-      {site.name.toLowerCase()}
+    <span className={`font-semibold tracking-tight whitespace-nowrap ${className ?? ''}`}>
+      {site.name}
     </span>
   )
 }
@@ -83,13 +131,13 @@ export function LogoLockup({ className }: { className?: string }) {
     .split(' ')
     .map((part) => part[0])
     .join('')
-    .toLowerCase()
+    .toUpperCase()
 
   return (
     <span className={`inline-flex items-center gap-2.5 ${className ?? ''}`}>
       <LogoMark className="size-5 shrink-0" />
-      <LogoWordmark className="hidden text-[13px] sm:inline" />
-      <span className="text-[13px] tracking-tight sm:hidden">{initials}</span>
+      <LogoWordmark className="hidden text-[14px] sm:inline" />
+      <span className="text-[14px] font-semibold tracking-tight sm:hidden">{initials}</span>
     </span>
   )
 }

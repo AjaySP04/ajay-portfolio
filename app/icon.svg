@@ -1,9 +1,18 @@
+<!-- The favicon, matching the mark the site actually shows: the monogram on a
+     disc, echoing the ring of the wheel that opens the page. Colours are the
+     current palette (ink #08191F, canvas #F6FDFF, amber #F59E0B) — this file
+     cannot read CSS custom properties, so it is the one place besides
+     lib/palette.ts that mirrors them by hand. It was previously still on the
+     retired warm palette, which is exactly the drift lib/palette.ts exists to
+     prevent. A disc rather than a thin ring: at 16px an outline closes up into
+     a smudge, while a filled plate holds its silhouette. -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
-  <rect width="32" height="32" rx="4" fill="#1C1814"/>
-  <g transform="translate(2.2 2.2) scale(0.86)" fill="none" stroke-linecap="square" stroke-linejoin="miter">
-    <path d="M3.5 28 L15.5 4.5" stroke="#FDFCF9" stroke-width="3.4"/>
-    <path d="M15.5 4.5 V28" stroke="#FDFCF9" stroke-width="3.4"/>
-    <path d="M8.6 21.5 H15.5" stroke="#FDFCF9" stroke-width="3.4"/>
-    <path d="M15.5 5.6 H20.6 a5.9 5.9 0 0 1 0 11.8 H15.5" stroke="#F0A44A" stroke-width="3.4"/>
+  <circle cx="16" cy="16" r="16" fill="#08191F"/>
+  <path d="M16 1.2 V4.6" stroke="#F59E0B" stroke-width="2"/>
+  <g transform="translate(16 16) scale(0.62) translate(-15 -16.25)" fill="none" stroke-linecap="square" stroke-linejoin="miter">
+    <path d="M3.5 28 L15.5 4.5" stroke="#F6FDFF" stroke-width="4.2"/>
+    <path d="M15.5 4.5 V28" stroke="#F6FDFF" stroke-width="4.2"/>
+    <path d="M8.6 21.5 H15.5" stroke="#F6FDFF" stroke-width="4.2"/>
+    <path d="M15.5 5.6 H20.6 a5.9 5.9 0 0 1 0 11.8 H15.5" stroke="#F59E0B" stroke-width="4.2"/>
   </g>
 </svg>

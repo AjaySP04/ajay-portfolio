@@ -65,6 +65,12 @@ function contentSecurityPolicy(): string {
   )
 }
 
+/** The two latin cuts `lib/og.tsx` loads, matched without naming the family. */
+const OG_FONT_FILES = [
+  './node_modules/@fontsource/*/files/*-latin-400-normal.woff',
+  './node_modules/@fontsource/*/files/*-latin-700-normal.woff',
+] as const
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
@@ -80,13 +86,18 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     '/resume': ['./public/resume/**/*'],
     '/resume/view': ['./public/resume/**/*'],
-    // OG image generation reads Arimo from the installed fontsource package;
-    // the tracer cannot see through a runtime path.join. The site itself ships
-    // no webfont — Satori just cannot use a system one.
-    '/opengraph-image': ['./node_modules/@fontsource/arimo/files/*.woff'],
-    '/projects/opengraph-image': ['./node_modules/@fontsource/arimo/files/*.woff'],
-    '/projects/[slug]/opengraph-image': ['./node_modules/@fontsource/arimo/files/*.woff'],
-    '/play/opengraph-image': ['./node_modules/@fontsource/arimo/files/*.woff'],
+    // OG image generation reads the site's face from the installed fontsource
+    // package; the tracer cannot see through a runtime path.join.
+    //
+    // Matched by wildcard rather than by package name, and narrowed to the two
+    // latin cuts Satori actually loads. Exactly one @fontsource package is ever
+    // installed, so this resolves to the same files a literal path would — but
+    // it means changing the site's typeface never requires editing this config.
+    // See lib/typeface.ts.
+    '/opengraph-image': [...OG_FONT_FILES],
+    '/projects/opengraph-image': [...OG_FONT_FILES],
+    '/projects/[slug]/opengraph-image': [...OG_FONT_FILES],
+    '/play/opengraph-image': [...OG_FONT_FILES],
   },
 
   async headers() {

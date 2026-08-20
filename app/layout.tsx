@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
-import { CrtIntro } from '@/components/crt-intro'
+import { siteFont } from '@/app/fonts'
+import { LogoIntro } from '@/components/logo-intro'
 import { SphereField } from '@/components/sphere-field'
 import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
@@ -84,17 +85,14 @@ export const viewport: Viewport = {
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  // No font className on <html>: the site is set in the system Helvetica/Arial
-  // stack, so there is no next/font variable to hang on the element and no
-  // webfont request to make.
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={siteFont.variable}>
       <body className="min-h-dvh">
         {/* Before anything else in the body, and outside ThemeProvider: it is a
             static server-rendered element whose animation runs from first paint.
             Gating it behind a client provider would flash the finished page and
             only then play the intro. */}
-        <CrtIntro />
+        <LogoIntro />
         <StructuredData />
         <ThemeProvider>
           <a
