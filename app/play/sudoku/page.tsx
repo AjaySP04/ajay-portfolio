@@ -26,7 +26,7 @@ export default function SudokuPage() {
 
         <Link
           href="/play"
-          className="ease-console inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.14em] text-muted uppercase transition-colors duration-200 hover:text-accent-text"
+          className="ease-console inline-flex items-center gap-2 text-[11px] tracking-[0.06em] text-muted uppercase transition-colors duration-200 hover:text-accent-text"
         >
           <ArrowLeft className="size-3.5" strokeWidth={1.75} aria-hidden="true" />
           All games

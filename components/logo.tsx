@@ -66,7 +66,7 @@ export function LogoTile({ className }: { className?: string }) {
 /** Name only, set in the mono face that carries the site's identity. */
 export function LogoWordmark({ className }: { className?: string }) {
   return (
-    <span className={`font-mono tracking-tight whitespace-nowrap ${className ?? ''}`}>
+    <span className={`tracking-tight whitespace-nowrap ${className ?? ''}`}>
       {site.name.toLowerCase()}
     </span>
   )
@@ -89,7 +89,7 @@ export function LogoLockup({ className }: { className?: string }) {
     <span className={`inline-flex items-center gap-2.5 ${className ?? ''}`}>
       <LogoMark className="size-5 shrink-0" />
       <LogoWordmark className="hidden text-[13px] sm:inline" />
-      <span className="font-mono text-[13px] tracking-tight sm:hidden">{initials}</span>
+      <span className="text-[13px] tracking-tight sm:hidden">{initials}</span>
     </span>
   )
 }

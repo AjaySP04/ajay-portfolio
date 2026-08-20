@@ -23,7 +23,7 @@ export function SiteHeader() {
               <li key={item.id}>
                 <Link
                   href={item.href}
-                  className="ease-console inline-flex h-9 items-center rounded-sm border border-transparent px-3 font-mono text-[11px] tracking-[0.14em] text-muted uppercase transition-colors duration-200 hover:border-hairline hover:bg-elevated hover:text-fg"
+                  className="ease-console inline-flex h-9 items-center rounded-sm border border-transparent px-3 text-[11px] tracking-[0.06em] text-muted uppercase transition-colors duration-200 hover:border-hairline hover:bg-elevated hover:text-fg"
                 >
                   {item.label}
                 </Link>
@@ -36,7 +36,7 @@ export function SiteHeader() {
           <a
             href={site.resume.downloadPath}
             {...trackAttrs('resume_downloaded', { source: 'header' })}
-            className="ease-console inline-flex h-9 items-center rounded-sm border border-transparent px-3 font-mono text-[11px] tracking-[0.14em] text-muted uppercase transition-colors duration-200 hover:border-hairline hover:bg-elevated hover:text-fg"
+            className="ease-console inline-flex h-9 items-center rounded-sm border border-transparent px-3 text-[11px] tracking-[0.06em] text-muted uppercase transition-colors duration-200 hover:border-hairline hover:bg-elevated hover:text-fg"
           >
             résumé
           </a>

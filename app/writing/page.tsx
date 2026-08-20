@@ -45,7 +45,7 @@ export default async function WritingPage() {
               href={writing.profileUrl}
               target="_blank"
               rel="noreferrer noopener me"
-              className="ease-console inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.14em] text-accent-text uppercase transition-colors duration-200 hover:text-fg"
+              className="ease-console inline-flex items-center gap-2 text-[11px] tracking-[0.06em] text-accent-text uppercase transition-colors duration-200 hover:text-fg"
             >
               Follow on Medium
               <ArrowUpRight className="size-3.5" strokeWidth={1.75} aria-hidden="true" />

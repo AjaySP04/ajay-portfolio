@@ -9,7 +9,7 @@ import type { ProjectCategory } from '@/content/projects/taxonomy'
 type CategoryFilter = { value: ProjectCategory; label: string }
 
 const CHIP =
-  'ease-console rounded-sm border px-2.5 py-1 font-mono text-[11px] tracking-[0.1em] uppercase transition-colors duration-200'
+  'ease-console rounded-sm border px-2.5 py-1 text-[11px] tracking-[0.05em] uppercase transition-colors duration-200'
 const CHIP_OFF = 'border-hairline text-muted hover:border-hairline-strong hover:text-fg'
 const CHIP_ON = 'border-accent bg-accent text-on-accent'
 
@@ -49,7 +49,7 @@ export function ProjectsExplorer({
           <legend className="sr-only">Filter by category</legend>
           <span
             aria-hidden="true"
-            className="font-mono text-[10px] tracking-[0.18em] text-faint uppercase"
+            className="text-[10px] tracking-[0.07em] text-faint uppercase"
           >
             Category
           </span>
@@ -73,7 +73,7 @@ export function ProjectsExplorer({
           <legend className="sr-only">Filter by stack</legend>
           <span
             aria-hidden="true"
-            className="font-mono text-[10px] tracking-[0.18em] text-faint uppercase"
+            className="text-[10px] tracking-[0.07em] text-faint uppercase"
           >
             Stack
           </span>
@@ -94,7 +94,7 @@ export function ProjectsExplorer({
         </fieldset>
 
         <div className="flex items-center justify-between gap-4 border-t border-hairline pt-3">
-          <p aria-live="polite" className="font-mono text-[11px] text-muted">
+          <p aria-live="polite" className="text-[11px] text-muted">
             {visible.length} of {projects.length} {projects.length === 1 ? 'project' : 'projects'}
           </p>
           {filtered ? (
@@ -104,7 +104,7 @@ export function ProjectsExplorer({
                 setCategory(null)
                 setStack(null)
               }}
-              className="ease-console inline-flex items-center gap-1.5 font-mono text-[11px] tracking-[0.1em] text-accent-text uppercase transition-colors duration-200 hover:text-fg"
+              className="ease-console inline-flex items-center gap-1.5 text-[11px] tracking-[0.05em] text-accent-text uppercase transition-colors duration-200 hover:text-fg"
             >
               <X className="size-3.5" strokeWidth={1.75} aria-hidden="true" />
               Clear filters

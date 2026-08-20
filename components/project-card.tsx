@@ -38,7 +38,7 @@ export function ProjectCard({
   // homepage, and stacking two translucent elevated layers muddies both.
   return (
     <article className="flex flex-col rounded-sm border border-hairline bg-canvas">
-      <header className="flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-hairline px-4 py-2.5 font-mono text-[11px] tracking-[0.14em] uppercase">
+      <header className="flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-hairline px-4 py-2.5 text-[11px] tracking-[0.06em] uppercase">
         <span className="inline-flex items-center gap-2 text-fg">
           <span className={`size-1.5 rounded-full ${STATUS_DOT[project.status]}`} aria-hidden="true" />
           {STATUS_LABELS[project.status]}
@@ -52,7 +52,7 @@ export function ProjectCard({
 
       <div className="flex flex-1 flex-col gap-4 p-4">
         <div>
-          <Heading className="font-mono text-[17px] font-medium tracking-tight text-fg">
+          <Heading className="text-[17px] font-medium tracking-tight text-fg">
             {project.deepDive ? (
               <Link
                 href={`/projects/${project.slug}`}
@@ -71,7 +71,7 @@ export function ProjectCard({
           {project.stack.map((item) => (
             <li
               key={item}
-              className="rounded-sm border border-hairline px-2 py-0.5 font-mono text-[11px] text-muted"
+              className="rounded-sm border border-hairline px-2 py-0.5 text-[11px] text-muted"
             >
               {item}
             </li>
@@ -82,10 +82,10 @@ export function ProjectCard({
           <dl className="mt-auto grid gap-px overflow-hidden rounded-sm bg-hairline sm:grid-cols-3">
             {project.metrics.map((metric) => (
               <div key={metric.label} className="bg-canvas px-3 py-2.5">
-                <dt className="font-mono text-[10px] tracking-[0.16em] text-faint uppercase">
+                <dt className="text-[10px] tracking-[0.16em] text-faint uppercase">
                   {metric.label}
                 </dt>
-                <dd className="mt-1 font-mono text-[12px] text-fg">{metric.value}</dd>
+                <dd className="mt-1 text-[12px] text-fg">{metric.value}</dd>
               </div>
             ))}
           </dl>
@@ -100,7 +100,7 @@ export function ProjectCard({
             target="_blank"
             rel="noreferrer noopener"
             {...trackAttrs('project_clicked', { slug: project.slug, target: key })}
-            className="ease-console inline-flex items-center gap-1.5 font-mono text-[11px] tracking-[0.1em] text-muted uppercase transition-colors duration-200 hover:text-accent-text"
+            className="ease-console inline-flex items-center gap-1.5 text-[11px] tracking-[0.05em] text-muted uppercase transition-colors duration-200 hover:text-accent-text"
           >
             <Icon className="size-3.5" strokeWidth={1.75} aria-hidden="true" />
             {label}
@@ -111,7 +111,7 @@ export function ProjectCard({
           <Link
             href={`/projects/${project.slug}`}
             {...trackAttrs('project_clicked', { slug: project.slug, target: 'detail' })}
-            className="ease-console ml-auto inline-flex items-center gap-1.5 font-mono text-[11px] tracking-[0.1em] text-accent-text uppercase transition-colors duration-200 hover:text-fg"
+            className="ease-console ml-auto inline-flex items-center gap-1.5 text-[11px] tracking-[0.05em] text-accent-text uppercase transition-colors duration-200 hover:text-fg"
           >
             {/* Names the target rather than saying "read more" — generic link
                 text is both a screen-reader problem and an SEO audit failure. */}

@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
-import { Panel } from '@/components/panel'
+import { CollapsibleSection } from '@/components/collapsible-section'
 import { PostList } from '@/components/post-list'
 import { Section } from '@/components/section'
 import { HOMEPAGE_POST_COUNT, getPosts, writing } from '@/content/writing'
@@ -23,7 +23,7 @@ export async function WritingSection() {
 
   return (
     <Section id="writing" className="mt-24">
-      <Panel
+      <CollapsibleSection
         title={writing.heading}
         headingId="writing-heading"
         meta={posts.length > shown.length ? `${shown.length} of ${posts.length} shown` : 'On Medium'}
@@ -37,13 +37,13 @@ export async function WritingSection() {
         <div className="border-t border-hairline px-4 py-3">
           <Link
             href="/writing"
-            className="ease-console inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.14em] text-accent-text uppercase transition-colors duration-200 hover:text-fg"
+            className="ease-console inline-flex items-center gap-2 text-[11px] tracking-[0.06em] text-accent-text uppercase transition-colors duration-200 hover:text-fg"
           >
             All writing
             <ArrowRight className="size-3.5" strokeWidth={1.75} aria-hidden="true" />
           </Link>
         </div>
-      </Panel>
+      </CollapsibleSection>
     </Section>
   )
 }

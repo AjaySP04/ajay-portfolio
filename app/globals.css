@@ -5,76 +5,138 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ─────────────────────────────────────────────────────────────
-   Palette — raw values live here, semantic tokens are mapped in
-   @theme below.
+   THE PALETTE — the single place colour is defined.
 
-   LIGHT IS THE BASE DECLARATION, not an override. Before hydration
-   there is no class on <html>, so whatever :root holds is what
-   paints first — putting dark here caused a flash of dark on every
-   load once light became the default.
+   Re-theming the site means editing this block and nothing else.
+   Nothing outside it may hardcode a colour: the canvas orb field
+   reads these custom properties at runtime, the CRT intro reads
+   them, and `lib/og.tsx` imports the shared constants that mirror
+   them. A literal hex anywhere else is a bug — it silently opts
+   that surface out of every future theme change.
 
-   Warm rather than blue-grey: paper-white surfaces, warm near-black
-   text, amber kept as the brand accent and teal for links. Every
-   text/surface pair is verified >= 4.5:1 (worst is 4.76).
+   LIGHT IS THE BASE DECLARATION, not an override. Before
+   hydration there is no class on <html>, so whatever :root holds
+   is what paints first — putting dark here caused a flash of dark
+   on every load once light became the default.
+
+   Cool near-white rather than warm paper: cyan accent, ink text
+   with a blue bias so the neutrals stay in the accent's family.
+
+   Every ink token was checked against every surface it can land
+   on, in both themes: 58 pairs, zero failures, worst 5.24 (light
+   danger-on-sunken). The live site's worst is 4.76, so this is an
+   improvement rather than a trade. Re-run the audit on any edit —
+   `--p-danger` started at #c8353f and measured 4.69 on sunken,
+   which passes AA but was a regression, and only showed up when
+   the audit was run against the real token block rather than the
+   shortlist it was picked from.
+
+   Two rules the contrast numbers force, both load-bearing:
+
+     1. A cyan fill carries DARK INK, never white. White on
+        #0BC0DC is 2.19:1 — a hard fail. Ink on it is 8.20:1.
+        Hence --p-on-accent is near-black in light mode.
+     2. Amber can never be a word. On the light canvas it measures
+        2.09:1 — every warm tone tested failed, the best being
+        3.67:1. It reads fine as text in dark mode (11.29:1), but a
+        token cannot be text in one theme and decoration in the
+        other, and light is the default. So it stays the section
+        marker and the warm orb tint. Never a link or a label.
    ───────────────────────────────────────────────────────────── */
 :root {
-  --p-canvas: #fdfcf9;
-  --p-sunken: #f5f1e8;
+  --p-canvas: #f6fdff;
+  --p-sunken: #e6f6fb;
   --p-elevated: #ffffff;
   --p-raised: #ffffff;
-  --p-hairline: #e7e0d2;
-  --p-hairline-strong: #d3c9b6;
-  --p-fg: #1c1814;
-  --p-muted: #5a5147;
-  --p-faint: #6e6558;
-  --p-accent: #f0a44a;
-  --p-accent-text: #9a5a05;
-  --p-on-accent: #1c1814;
-  --p-link: #0d6e62;
-  --p-live: #0f7a4f;
+  --p-hairline: #cde8f0;
+  --p-hairline-strong: #aed8e4;
+  --p-fg: #08191f;
+  --p-muted: #3f5a66;
+  --p-faint: #516e78;
+  --p-accent: #0bc0dc;
+  --p-on-accent: #08191f;
+  --p-accent-text: #086e80;
+  --p-link: #086e80;
+  --p-live: #0a7550;
   --p-danger: #be2d33;
+  /* Decorative only. Markers and orb tint — never text. */
+  --p-amber: #f59e0b;
 
-  /* The canvas needs channel triplets so it can vary alpha per edge. */
-  --graph-node-rgb: 122 108 90;
-  --graph-edge-rgb: 156 142 120;
-  --graph-accent-rgb: 154 90 5;
-  --graph-node-alpha: 0.46;
-  --graph-edge-alpha: 0.28;
+  /* The hero wash. A pale cyan gradient rather than a solid block, so the
+     orb field stays visible through it and navy-style heaviness never lands. */
+  --hero-bg: linear-gradient(158deg, #dff5fb 0%, #effafd 62%, #f6fdff 100%);
+  --hero-edge: #c6e8f1;
+  --hero-sphere: 6 110 128;
+  --hero-sphere-warm: 176 116 10;
+  --hero-sphere-a: 0.13;
+  --hero-sphere-rim: 0.26;
+  --hero-sphere-edge-a: 0.24;
+
+  /* The orb canvas needs channel triplets so it can vary alpha per orb and
+     per edge. Alpha is deliberately theme-bound: a light canvas needs the
+     field to be a whisper, a dark one can carry it. */
+  --sphere: 11 192 220;
+  --sphere-warm: 217 142 11;
+  --sphere-a: 0.1;
+  --sphere-rim: 0.18;
+  --sphere-edge-a: 0.2;
+
+  /* CRT intro. Graphite, not cyan — a coloured shutter reads as a brand
+     splash screen; grey reads as a screen that has not warmed up yet. */
+  --crt-ground: #8b98a3;
+  --crt-ground-2: #9eabb5;
+  --crt-ground-3: #b4bfc8;
+  --crt-beam: #ffffff;
 
   color-scheme: light;
 }
 
 .dark {
-  --p-canvas: #08090b;
-  --p-sunken: #0b0c0f;
-  --p-elevated: #101215;
-  --p-raised: #16191d;
-  --p-hairline: #1e2227;
-  --p-hairline-strong: #2c3238;
-  --p-fg: #e7e9ec;
-  --p-muted: #8a9199;
-  --p-faint: #7b828a;
-  --p-accent: #f0a44a;
-  --p-accent-text: #f0a44a;
-  --p-on-accent: #08090b;
-  --p-link: #5cc8ff;
-  --p-live: #3fcf8e;
-  --p-danger: #f2666b;
+  --p-canvas: #05131a;
+  --p-sunken: #071a22;
+  --p-elevated: #0b2229;
+  --p-raised: #102b33;
+  --p-hairline: #17333d;
+  --p-hairline-strong: #244854;
+  --p-fg: #e4f6fa;
+  --p-muted: #93b7c2;
+  --p-faint: #7fa5b2;
+  --p-accent: #22d3ee;
+  --p-on-accent: #03121a;
+  --p-accent-text: #38dbf0;
+  --p-link: #38dbf0;
+  --p-live: #34d399;
+  --p-danger: #fb7185;
+  --p-amber: #fbbf24;
 
-  --graph-node-rgb: 138 145 153;
-  --graph-edge-rgb: 110 118 127;
-  --graph-accent-rgb: 240 164 74;
-  --graph-node-alpha: 0.75;
-  --graph-edge-alpha: 0.5;
+  --hero-bg: linear-gradient(158deg, #0b2e38 0%, #071d26 62%, #05131a 100%);
+  --hero-edge: #17333d;
+  --hero-sphere: 86 220 240;
+  --hero-sphere-warm: 251 191 36;
+  --hero-sphere-a: 0.22;
+  --hero-sphere-rim: 0.44;
+  --hero-sphere-edge-a: 0.4;
+
+  --sphere: 34 211 238;
+  --sphere-warm: 251 191 36;
+  --sphere-a: 0.3;
+  --sphere-rim: 0.55;
+  --sphere-edge-a: 0.46;
 
   color-scheme: dark;
 }
 
 @theme inline {
-  /* Type — the mono/sans split is the identity. Mono carries every
-     header, label, metric and nav item; Inter carries prose only. */
-  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  /* One family, one token. The mono/sans split used to be the identity; now
+     there is a single system stack and nothing is downloaded, which is also
+     what removes ~87KB of webfont from the critical path.
+
+     There is deliberately no --font-mono. It was aliased to this same stack
+     while the 87 `font-mono` usages were removed file by file — pointing it at
+     the browser's default monospace instead would have left the site visibly
+     broken at every intermediate commit — and it went away with the last one.
+     Numeric alignment is `.tnum` now, not a monospaced face. */
+  --font-sans: 'Helvetica Neue', Arial, Helvetica, sans-serif;
 
   --color-canvas: var(--p-canvas);
   --color-sunken: var(--p-sunken);
@@ -91,17 +153,19 @@
   --color-link: var(--p-link);
   --color-live: var(--p-live);
   --color-danger: var(--p-danger);
+  --color-amber: var(--p-amber);
 
-  /* Radius capped at 4px — sharp and deliberate. Overriding the whole
-     scale means no `rounded-*` utility can escape the cap. */
-  --radius-xs: 2px;
-  --radius-sm: 2px;
-  --radius-md: 3px;
-  --radius-lg: 4px;
-  --radius-xl: 4px;
-  --radius-2xl: 4px;
-  --radius-3xl: 4px;
-  --radius-4xl: 4px;
+  /* Softened site-wide. Overriding the whole scale means no `rounded-*`
+     utility can escape the cap — the same mechanism that used to pin
+     everything at 4px now pins it at 14px. */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+  --radius-2xl: 14px;
+  --radius-3xl: 14px;
+  --radius-4xl: 14px;
 
   --ease-console: cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -132,10 +196,11 @@
   :focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
-    border-radius: 2px;
+    border-radius: var(--radius-sm);
   }
 
-  /* Tabular figures everywhere numbers are compared vertically. */
+  /* Tabular figures everywhere numbers are compared vertically. With the
+     mono face gone, this is the only thing keeping columns aligned. */
   .tnum {
     font-variant-numeric: tabular-nums;
     font-feature-settings: 'tnum' 1;
@@ -143,9 +208,10 @@
 }
 
 /* ─────────────────────────────────────────────────────────────
-   Reduced motion — wired globally from the start, not bolted on.
-   Kills CSS animation/transition and smooth scrolling; the canvas
-   background reads the same media query and renders a static frame.
+   Reduced motion — wired globally, not bolted on. Kills CSS
+   animation/transition and smooth scrolling; the orb canvas reads
+   the same media query and renders a static frame, and the CRT
+   intro removes itself entirely rather than shortening.
    ───────────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -170,9 +236,6 @@
    failed chunk or an older browser therefore degrades to plain
    visible content — never to a blank panel.
 
-   `--reveal-index` stretches each item's range a little further so a
-   row of them cascades instead of arriving as one block.
-
    Transform only — deliberately no opacity. A scroll-driven animation is
    position-bound and reversible, so a reader who stops mid-scroll parks the
    element wherever the range puts it. Fading would make partial opacity a
@@ -192,5 +255,192 @@
 @keyframes reveal {
   from {
     transform: translateY(10px);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   CRT power-on — 900ms, once per document load.
+
+   Graphite rather than cyan: a coloured shutter reads as a brand
+   splash screen, while grey reads as a screen that has not warmed
+   up yet, which is the actual metaphor. Grey also needs no
+   per-theme handling — it sits correctly against both grounds.
+
+   Smoothness came from three things, and the duration was the
+   least of them:
+
+     1. The beam is 1.5px under an 8px/42% glow. It was 2px under a
+        14px/80% halo, and that bloom is what read as a *flash*
+        rather than a light coming on.
+     2. Each shutter carries a gradient toward its inner edge, so
+        the parting boundary is a soft transition instead of a hard
+        rule sliding away.
+     3. The retract holds still for the first 26% and then eases out.
+        Launching the instant the beam lands is what made it feel
+        abrupt. Per-keyframe `animation-timing-function` is what
+        lets the hold and the glide ease differently inside one
+        animation.
+
+   `pointer-events: none` throughout and a final `visibility:
+   hidden` under `forwards`, so it can never intercept a click even
+   if a keyframe is interrupted. Reduced motion removes it outright
+   rather than shortening it.
+   ───────────────────────────────────────────────────────────── */
+.crt {
+  --crt-duration: 900ms;
+  --crt-glide: cubic-bezier(0.42, 0, 0.24, 1);
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  animation: crt-end var(--crt-duration) step-end forwards;
+}
+
+.crt-shutter {
+  position: absolute;
+  left: 0;
+  right: 0;
+  /* Slightly over half, so no hairline of page shows at the seam. */
+  height: 50.4%;
+}
+
+.crt-top {
+  top: 0;
+  background: linear-gradient(
+    to bottom,
+    var(--crt-ground) 0%,
+    var(--crt-ground-2) 84%,
+    var(--crt-ground-3) 100%
+  );
+  animation: crt-part-up var(--crt-duration) linear forwards;
+}
+
+.crt-bottom {
+  bottom: 0;
+  background: linear-gradient(
+    to top,
+    var(--crt-ground) 0%,
+    var(--crt-ground-2) 84%,
+    var(--crt-ground-3) 100%
+  );
+  animation: crt-part-down var(--crt-duration) linear forwards;
+}
+
+.crt-beam {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1.5px;
+  margin-top: -0.75px;
+  background: var(--crt-beam);
+  box-shadow: 0 0 8px 1px color-mix(in srgb, var(--crt-beam) 42%, transparent);
+  transform: scaleX(0);
+  opacity: 0;
+  animation: crt-beam var(--crt-duration) linear forwards;
+}
+
+@keyframes crt-part-up {
+  0% {
+    transform: translateY(0);
+  }
+  26% {
+    transform: translateY(0);
+    animation-timing-function: var(--crt-glide);
+  }
+  100% {
+    transform: translateY(-100.5%);
+  }
+}
+
+@keyframes crt-part-down {
+  0% {
+    transform: translateY(0);
+  }
+  26% {
+    transform: translateY(0);
+    animation-timing-function: var(--crt-glide);
+  }
+  100% {
+    transform: translateY(100.5%);
+  }
+}
+
+@keyframes crt-beam {
+  0% {
+    transform: scaleX(0);
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.18, 0.85, 0.28, 1);
+  }
+  9% {
+    opacity: 0.9;
+  }
+  26% {
+    transform: scaleX(1);
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.5, 1);
+  }
+  68% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 0;
+  }
+}
+
+@keyframes crt-end {
+  0%,
+  99% {
+    visibility: visible;
+  }
+  100% {
+    visibility: hidden;
+  }
+}
+
+/* Removed outright, not shortened. The global reduced-motion block collapses
+   every animation to 0.01ms, which would leave the shutters parked over the
+   page at their final frame — so this has to hide the element itself. */
+@media (prefers-reduced-motion: reduce) {
+  .crt {
+    display: none;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Collapsible sections — native <details>.
+
+   `interpolate-size` is what makes `block-size: auto` animatable;
+   without it the panel snaps. Both are wrapped in @supports so a
+   browser lacking either degrades to an instant open/close rather
+   than to a broken panel, and reduced motion opts out entirely.
+   ───────────────────────────────────────────────────────────── */
+.accordion > summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+.accordion > summary::-webkit-details-marker {
+  display: none;
+}
+
+@supports (interpolate-size: allow-keywords) {
+  @media (prefers-reduced-motion: no-preference) {
+    :root {
+      interpolate-size: allow-keywords;
+    }
+
+    .accordion::details-content {
+      block-size: 0;
+      overflow: hidden;
+      transition:
+        block-size 280ms var(--ease-console),
+        content-visibility 280ms allow-discrete;
+    }
+
+    .accordion[open]::details-content {
+      block-size: auto;
+    }
   }
 }

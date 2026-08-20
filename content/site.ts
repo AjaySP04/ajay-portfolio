@@ -232,12 +232,26 @@ export const site: Site = siteSchema.parse({
       variant: 'primary',
       icon: 'arrow',
     },
+    /**
+     * Opens the PDF inline in a new tab rather than downloading it. A recruiter
+     * skimming ten candidates wants to *read* it, not manage a file — and the
+     * browser's own PDF viewer already offers a download button once it is open.
+     *
+     * `external: true` is what supplies target="_blank" and the rel guard;
+     * /resume/view already answers with `Content-Disposition: inline`. The
+     * download icon is a signal of what the link is, not a second action.
+     *
+     * Tracking still files this as `resume_downloaded`, because ActionLink tests
+     * for a /resume prefix *before* it checks `external` — otherwise this would
+     * be miscounted as an outbound channel click.
+     */
     {
-      id: 'resume-download',
-      label: 'Résumé',
-      href: '/resume',
+      id: 'resume-view',
+      label: 'View Résumé',
+      href: '/resume/view',
       variant: 'secondary',
       icon: 'download',
+      external: true,
     },
     {
       id: 'writing',

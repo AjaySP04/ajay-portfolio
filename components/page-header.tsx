@@ -14,10 +14,10 @@ export function PageHeader({
 }) {
   return (
     <header className="mx-auto max-w-6xl px-6 pt-16 pb-10 md:pt-20">
-      <p className="font-mono text-[11px] tracking-[0.18em] text-accent-text uppercase">
+      <p className="text-[11px] tracking-[0.07em] text-accent-text uppercase">
         {kicker}
       </p>
-      <h1 className="mt-4 font-mono text-[clamp(1.75rem,4.5vw,2.75rem)] leading-[1.05] font-semibold tracking-[-0.035em] text-balance text-fg">
+      <h1 className="mt-4 text-[clamp(1.75rem,4.5vw,2.75rem)] leading-[1.05] font-semibold tracking-[-0.035em] text-balance text-fg">
         {title}
       </h1>
       {intro ? (

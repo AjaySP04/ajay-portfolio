@@ -69,9 +69,10 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
 
-  // NB: `experimental.inlineCss` was measured and rejected. It does remove the
-  // one render-blocking stylesheet request, but the larger HTML delays font
-  // discovery enough to cost ~100ms of LCP on a throttled mobile connection.
+  // NB: `experimental.inlineCss` was measured and rejected once, on the grounds
+  // that the larger HTML delayed webfont discovery. That reasoning no longer
+  // applies — the site ships no webfont now — so it is worth re-measuring
+  // rather than leaving a stale verdict in place.
 
   // The resume routes read the PDF off disk at request time. Next's file
   // tracer cannot see a runtime `path.join`, so the asset has to be declared
@@ -79,12 +80,13 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     '/resume': ['./public/resume/**/*'],
     '/resume/view': ['./public/resume/**/*'],
-    // OG image generation reads JetBrains Mono from the installed fontsource
-    // package; the tracer cannot see through a runtime path.join.
-    '/opengraph-image': ['./node_modules/@fontsource/jetbrains-mono/files/*.woff'],
-    '/projects/opengraph-image': ['./node_modules/@fontsource/jetbrains-mono/files/*.woff'],
-    '/projects/[slug]/opengraph-image': ['./node_modules/@fontsource/jetbrains-mono/files/*.woff'],
-    '/play/opengraph-image': ['./node_modules/@fontsource/jetbrains-mono/files/*.woff'],
+    // OG image generation reads Arimo from the installed fontsource package;
+    // the tracer cannot see through a runtime path.join. The site itself ships
+    // no webfont — Satori just cannot use a system one.
+    '/opengraph-image': ['./node_modules/@fontsource/arimo/files/*.woff'],
+    '/projects/opengraph-image': ['./node_modules/@fontsource/arimo/files/*.woff'],
+    '/projects/[slug]/opengraph-image': ['./node_modules/@fontsource/arimo/files/*.woff'],
+    '/play/opengraph-image': ['./node_modules/@fontsource/arimo/files/*.woff'],
   },
 
   async headers() {

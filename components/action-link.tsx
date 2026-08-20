@@ -9,11 +9,21 @@ const ICONS = {
   arrow: ArrowRight,
 } as const
 
+/**
+ * `primary` carries dark ink on the cyan fill, not white. That is forced rather
+ * than chosen: white on this cyan measures 2.19:1, a hard fail, while the ink
+ * token is 8.20:1. Both come from the palette together, so the pair cannot drift
+ * apart in a future re-theme.
+ *
+ * `secondary` sits on the hero wash, so it needs an opaque surface — a
+ * translucent one let the gradient bleed through and the label lost contrast
+ * against the lighter end of it.
+ */
 const VARIANTS = {
   primary: 'border-accent bg-accent text-on-accent hover:bg-accent/88',
   secondary:
-    'border-hairline bg-elevated/70 text-fg hover:border-hairline-strong hover:bg-raised',
-  ghost: 'border-transparent text-muted hover:border-hairline hover:text-fg',
+    'border-hairline-strong bg-elevated text-fg hover:border-accent hover:bg-sunken',
+  ghost: 'border-transparent text-muted hover:border-hairline-strong hover:text-fg',
 } as const
 
 /**
@@ -42,10 +52,10 @@ export function ActionLink({ action }: { action: HeroAction }) {
       href={action.href}
       {...(action.external ? { target: '_blank', rel: 'noreferrer noopener' } : {})}
       {...tracking}
-      className={`ease-console inline-flex h-10 items-center gap-2 rounded-sm border px-4 font-mono text-[12px] tracking-[0.12em] uppercase transition-colors duration-200 ${VARIANTS[action.variant]}`}
+      className={`ease-console inline-flex h-11 items-center gap-2 rounded-lg border px-5 text-[14px] font-semibold transition-colors duration-200 ${VARIANTS[action.variant]}`}
     >
       {action.label}
-      <Icon className="size-3.5 shrink-0" strokeWidth={1.75} aria-hidden="true" />
+      <Icon className="size-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
     </a>
   )
 }

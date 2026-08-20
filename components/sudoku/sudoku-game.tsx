@@ -27,7 +27,7 @@ import { DIFFICULTIES, TECHNIQUE_LABELS, type Difficulty } from '@/lib/sudoku/ty
 import { track } from '@/lib/analytics/client'
 
 const BTN =
-  'ease-console inline-flex h-9 items-center justify-center gap-1.5 rounded-sm border px-3 font-mono text-[11px] tracking-[0.1em] uppercase transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-40'
+  'ease-console inline-flex h-9 items-center justify-center gap-1.5 rounded-sm border px-3 text-[11px] tracking-[0.05em] uppercase transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-40'
 const BTN_OFF = 'border-hairline text-muted hover:border-hairline-strong hover:text-fg'
 const BTN_ON = 'border-accent bg-accent text-on-accent'
 
@@ -228,7 +228,7 @@ export function SudokuGame() {
           ))}
         </div>
 
-        <div className="flex items-center gap-3 font-mono text-[11px] text-muted">
+        <div className="flex items-center gap-3 text-[11px] text-muted">
           <span className="tnum text-fg">{formatTime(elapsedMs)}</span>
           {best[view.difficulty] !== undefined ? (
             <span className="tnum">best {formatTime(best[view.difficulty]!)}</span>
@@ -271,7 +271,7 @@ export function SudokuGame() {
 
           <p
             id="sudoku-keys"
-            className="mt-4 text-center font-mono text-[10px] leading-relaxed tracking-[0.1em] text-faint uppercase"
+            className="mt-4 text-center text-[10px] leading-relaxed tracking-[0.05em] text-faint uppercase"
           >
             Arrows move · 1–9 place · N notes · U undo · R redo · X mistakes · P pause · ? hint
           </p>
@@ -279,7 +279,7 @@ export function SudokuGame() {
 
         <div className="flex flex-col gap-4 bg-canvas p-4">
           {solved ? (
-            <p className="flex items-start gap-2 rounded-sm border border-live/40 bg-live/[0.07] px-3 py-2.5 font-mono text-[11px] leading-relaxed text-fg">
+            <p className="flex items-start gap-2 rounded-sm border border-live/40 bg-live/[0.07] px-3 py-2.5 text-[11px] leading-relaxed text-fg">
               <CircleCheck
                 className="mt-px size-3.5 shrink-0 text-live"
                 strokeWidth={1.75}
@@ -293,7 +293,7 @@ export function SudokuGame() {
           ) : null}
 
           <div>
-            <p className="mb-2 font-mono text-[10px] tracking-[0.18em] text-faint uppercase">
+            <p className="mb-2 text-[10px] tracking-[0.07em] text-faint uppercase">
               Digits
             </p>
             <div className="grid grid-cols-3 gap-1.5">
@@ -309,7 +309,7 @@ export function SudokuGame() {
                       boardRef.current?.focus()
                     }}
                     aria-label={`Place ${value}, ${left} remaining`}
-                    className={`ease-console flex w-full aspect-square items-center justify-center rounded-sm border font-mono text-[16px] transition-colors duration-200 disabled:opacity-40 ${
+                    className={`ease-console flex w-full aspect-square items-center justify-center rounded-sm border text-[16px] transition-colors duration-200 disabled:opacity-40 ${
                       left === 0
                         ? 'border-hairline text-faint'
                         : 'border-hairline text-fg hover:border-accent hover:text-accent-text'
@@ -322,7 +322,7 @@ export function SudokuGame() {
                       name, which axe flags as a label mismatch. */}
                   <span
                     aria-hidden="true"
-                    className="pointer-events-none absolute right-1 bottom-0.5 font-mono text-[9px] text-faint"
+                    className="pointer-events-none absolute right-1 bottom-0.5 text-[9px] text-faint"
                   >
                     {left}
                   </span>
@@ -389,7 +389,7 @@ export function SudokuGame() {
             </button>
           </div>
 
-          <label className="flex cursor-pointer items-center gap-2 font-mono text-[11px] text-muted">
+          <label className="flex cursor-pointer items-center gap-2 text-[11px] text-muted">
             <input
               type="checkbox"
               checked={view.showMistakes}
@@ -399,7 +399,7 @@ export function SudokuGame() {
             Highlight mistakes
           </label>
 
-          <dl className="mt-auto space-y-2 border-t border-hairline pt-3 font-mono text-[10px] tracking-[0.14em] uppercase">
+          <dl className="mt-auto space-y-2 border-t border-hairline pt-3 text-[10px] tracking-[0.06em] uppercase">
             <div className="flex justify-between gap-2">
               <dt className="text-faint">Clues</dt>
               <dd className="tnum text-muted">{view.clues}</dd>
